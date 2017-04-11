@@ -1,6 +1,7 @@
 package com.example.florianporada.theassistant2;
 
 import android.app.Notification;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,7 +27,9 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.wearable.*;
 
-import java.io.Console;
+import java.io.*;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -34,8 +37,12 @@ public class MainActivity extends AppCompatActivity
         GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleApiClient mGoogleApiClient;
-    private static final String TAG = "MOBILE";
+    private TCPClient mTcpClient;
+    private static final String TAG = "MAIN_ACTIVITY";
     private static final String TO_WEAR = "/to_wear";
+    private Socket client;
+    private PrintWriter out;
+    private BufferedReader in;
 
 
     public void sendNotification(View view, String string) {
@@ -95,6 +102,20 @@ public class MainActivity extends AppCompatActivity
         mGoogleApiClient.connect();
     }
 
+    private void socketConnection() {
+        try{
+            client = new Socket("192.168.2.100", 9092);
+            out = new PrintWriter(client.getOutputStream(),true);
+            in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+
+        } catch(UnknownHostException e) {
+            System.out.println("Unknown host: 192.168.2.100");
+
+        } catch(IOException e) {
+            System.out.println("No I/O");
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,7 +125,12 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         final EditText edittextDescription = (EditText) findViewById(R.id.editText);
+
+        //connect to google play service
         makeGoogleConnection();
+
+        // connect to the server
+        new connectTask().execute("");
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -208,4 +234,38 @@ public class MainActivity extends AppCompatActivity
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
+    public class connectTask extends AsyncTask<String,String,TCPClient> {
+
+        @Override
+        protected TCPClient doInBackground(String... message) {
+
+            //we create a TCPClient object and
+            mTcpClient = new TCPClient(new TCPClient.OnMessageReceived() {
+                @Override
+                //here the messageReceived method is implemented
+                public void messageReceived(String message) {
+                    //this method calls the onProgressUpdate
+                    publishProgress(message);
+                }
+            });
+            mTcpClient.run();
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+
+            Log.v(TAG, values.toString());
+
+            //in the arrayList we add the messaged received from server
+            //arrayList.add(values[0]);
+            // notify the adapter that the data set has changed. This means that new message received
+            // from server was added to the list
+            //mAdapter.notifyDataSetChanged();
+        }
+    }
+
 }
