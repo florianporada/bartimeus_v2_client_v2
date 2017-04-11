@@ -30,6 +30,7 @@ import com.google.android.gms.wearable.*;
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -104,7 +105,7 @@ public class MainActivity extends AppCompatActivity
 
     private void socketConnection() {
         try{
-            client = new Socket("192.168.2.100", 9092);
+            client = new Socket("192.168.2.100", 4444);
             out = new PrintWriter(client.getOutputStream(),true);
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
@@ -258,7 +259,8 @@ public class MainActivity extends AppCompatActivity
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
 
-            Log.v(TAG, values.toString());
+            Log.v(TAG, Arrays.toString(values));
+            sendMessageToWear(Arrays.toString(values));
 
             //in the arrayList we add the messaged received from server
             //arrayList.add(values[0]);

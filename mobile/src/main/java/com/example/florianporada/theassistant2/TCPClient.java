@@ -9,7 +9,7 @@ public class TCPClient {
 
     private String serverMessage;
     public static final String SERVERIP = "192.168.2.100"; //your computer IP address
-    public static final int SERVERPORT = 9092;
+    public static final int SERVERPORT = 4444;
     private OnMessageReceived mMessageListener = null;
     private boolean mRun = false;
 
