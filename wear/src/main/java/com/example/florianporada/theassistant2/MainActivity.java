@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
@@ -29,7 +30,9 @@ public class MainActivity extends WearableActivity implements
         GoogleApiClient.OnConnectionFailedListener {
 
     private static final SimpleDateFormat AMBIENT_DATE_FORMAT =
-            new SimpleDateFormat("HH:mm", Locale.US);
+            new SimpleDateFormat("HH:mm:ss", Locale.US);
+
+    private VibrationPatterns vibrations = new VibrationPatterns();
 
     private BoxInsetLayout mContainerView;
     private TextView mTextView;
@@ -42,6 +45,8 @@ public class MainActivity extends WearableActivity implements
             // Get extra data included in the Intent
             final String message = intent.getStringExtra("key");
             Log.v("BROADCASTRECEIVER", message);
+            Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+            vibrations.ConvertMessageToVibrations(v, message);
 
             runOnUiThread(new Runnable() {
 
