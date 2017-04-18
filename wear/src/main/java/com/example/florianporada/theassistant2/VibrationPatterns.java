@@ -8,8 +8,13 @@ import android.os.Vibrator;
 
 public class VibrationPatterns {
     public void ConvertMessageToVibrations(Vibrator v, String message, long vibrationDelay) {
-        long vibratePattern[] = new long[message.length() * 2 + 1];//Make an array of message length to store the vibration pattern
-        vibratePattern[0] = 0;//Start with a 0 delay
+        long vibratePattern[] = new long[message.length() * 2 + 7];//Make an array of message length to store the vibration pattern
+        vibratePattern[0] = 0;
+        for(int i = 1; i < 6; i++) {
+            if(i%2 == 0) vibratePattern[i] = 100;
+            else vibratePattern[i] = 200;
+        }
+        vibratePattern[6] = 500;//Start with a half second delay
 
         for(int i = 0; i < message.length(); i++) {
             int vibrationTime = 0;//Vibration time for this character
@@ -28,9 +33,11 @@ public class VibrationPatterns {
                     continue;
             }
 
-            vibratePattern[i * 2 + 1] = vibrationTime;//Add the length of vibration
-            vibratePattern[i * 2 + 2] = vibrationDelay;//Delay the vibrations
+            vibratePattern[i * 2 + 7] = vibrationTime;//Add the length of vibration
+            vibratePattern[i * 2 + 8] = vibrationDelay;//Delay the vibrations
         }
+
+
 
         v.vibrate(vibratePattern, -1);//Vibrate according to generated pattern
     }
