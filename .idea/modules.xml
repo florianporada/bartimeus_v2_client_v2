@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/TheAssistant2.iml" filepath="$PROJECT_DIR$/TheAssistant2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bartimeus_v2_client_v2.iml" filepath="$PROJECT_DIR$/bartimeus_v2_client_v2.iml" />
       <module fileurl="file://$PROJECT_DIR$/mobile/mobile.iml" filepath="$PROJECT_DIR$/mobile/mobile.iml" />
       <module fileurl="file://$PROJECT_DIR$/wear/wear.iml" filepath="$PROJECT_DIR$/wear/wear.iml" />
     </modules>
