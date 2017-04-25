@@ -42,7 +42,6 @@
     <exe-path>/usr/local/bin/bower</exe-path>
     <config-path />
   </component>
-  <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" interpreter_name="PHP 5.5" />
   <component name="ProjectResources">
     <resource url="urn:oasis:names:tc:xliff:document:1.2xliff-core-1.2-strict.xsd" location="$PROJECT_DIR$/../../_conf/xliff-core-1.2-strict.xsd" />
   </component>
