@@ -20,25 +20,25 @@
             android:inputType="textPersonName"
             android:ems="10"
             android:layout_alignParentTop="true" android:layout_centerHorizontal="true" android:layout_marginTop="47dp"
-            android:id="@+id/settings_editText_socketurl"/>
+            android:id="@+id/settings_editText_socketip"/>
     <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="numberDecimal"
             android:ems="10"
-            android:layout_below="@+id/settings_editText_socketurl" android:layout_alignStart="@+id/settings_editText_socketurl"
+            android:layout_below="@+id/settings_editText_socketip" android:layout_alignStart="@+id/settings_editText_socketip"
             android:layout_marginTop="50dp" android:id="@+id/settings_editText_socketport"/>
     <TextView
             android:text="@string/settings_socketport"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:layout_below="@+id/settings_editText_socketurl"
+            android:layout_height="wrap_content" android:layout_below="@+id/settings_editText_socketip"
             android:layout_alignStart="@+id/settings_editText_socketport" android:layout_marginTop="26dp" android:id="@+id/textView4"/>
     <TextView
             android:text="@string/settings_socketurl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="21dp" android:id="@+id/textView3" android:layout_alignParentTop="true"
-            android:layout_alignStart="@+id/settings_editText_socketurl"/>
+            android:layout_alignStart="@+id/settings_editText_socketip"/>
 
     <LinearLayout android:layout_width="match_parent"
                   android:layout_height="wrap_content"
@@ -49,14 +49,14 @@
 
         <Button android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Enter"
+                android:text="@string/settings_save"
                 android:id="@+id/settings_save"
                 android:layout_weight="1"
                 android:layout_gravity="bottom"/>
 
         <Button android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Clear"
+                android:text="@string/settings_barcode"
                 android:id="@+id/settings_barcode"
                 android:layout_weight="1"
                 android:layout_gravity="bottom"/>

@@ -2,7 +2,9 @@ package com.example.florianporada.theassistant2;
 
 import android.app.Activity;
 import android.app.Notification;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,6 +15,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.support.design.widget.NavigationView;
@@ -23,6 +26,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import com.google.android.gms.common.ConnectionResult;
@@ -40,13 +44,20 @@ public class MainActivity extends AppCompatActivity
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
-    private GoogleApiClient mGoogleApiClient;
-    private TCPClient mTcpClient;
     private static final String TAG = "MAIN_ACTIVITY";
     private static final String TO_WEAR = "/to_wear";
+    private static final String PREFERENCE_FILE_KEY = "TheAssistantFile";
+
+    private GoogleApiClient mGoogleApiClient;
+    private TCPClient mTcpClient;
+
     private Socket client;
     private PrintWriter out;
     private BufferedReader in;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor sharedPreferencesEditor;
+    private String socketIp;
+    private int socketPort;
 
 
     public void sendNotification(View view, String string) {
@@ -130,6 +141,13 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         final EditText edittextDescription = (EditText) findViewById(R.id.editText);
 
+
+        // get sharedpreferences
+        sharedPreferences = getSharedPreferences(PREFERENCE_FILE_KEY, Context.MODE_PRIVATE);
+
+        socketIp = sharedPreferences.getString("keySocketIp", "127.0.0.1");
+        socketPort = sharedPreferences.getInt("keySocketPort", 3030);
+
         //connect to google play service
         makeGoogleConnection();
 
@@ -163,6 +181,9 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        String test = sharedPreferences.getString("keySocketURL", null);
+        Log.d(TAG, test);
     }
 
     @Override
@@ -240,6 +261,15 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (getCurrentFocus() != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
     public class connectTask extends AsyncTask<String,String,TCPClient> {
 
         @Override
@@ -253,7 +283,8 @@ public class MainActivity extends AppCompatActivity
                     //this method calls the onProgressUpdate
                     publishProgress(message);
                 }
-            });
+            }, socketIp, socketPort);
+
             mTcpClient.run();
 
             return null;

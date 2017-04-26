@@ -8,7 +8,9 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -16,10 +18,10 @@ public class SettingsActivity extends AppCompatActivity {
     private static final String TAG = "SETTINGS_ACTIVITY";
     private static final String PREFERENCE_FILE_KEY = "TheAssistantFile";
 
-    EditText mSocketPort;
-    EditText mSocketUrl;
-    Button mSettingsSave;
-    Button mSettingsBarcode;
+    private EditText mSocketPort;
+    private EditText mSocketIp;
+    private Button mSettingsSave;
+    private Button mSettingsBarcode;
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedPreferencesEditor;
@@ -44,7 +46,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mSocketUrl = (EditText) findViewById(R.id.settings_editText_socketurl);
+        mSocketIp = (EditText) findViewById(R.id.settings_editText_socketip);
         mSocketPort = (EditText) findViewById(R.id.settings_editText_socketport);
 
 
@@ -53,8 +55,8 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "clicked save");
-                if (!mSocketUrl.getText().toString().matches("") && !mSocketPort.getText().toString().matches("")) {
-                    sharedPreferencesEditor.putString("keySocketURL", mSocketUrl.getText().toString());
+                if (!mSocketIp.getText().toString().matches("") && !mSocketPort.getText().toString().matches("")) {
+                    sharedPreferencesEditor.putString("keySocketIp", mSocketIp.getText().toString());
                     sharedPreferencesEditor.putInt("keySocketPort", Integer.parseInt(mSocketPort.getText().toString()));
                     Log.d(TAG, sharedPreferencesEditor.commit() + "");
                 }
@@ -66,11 +68,20 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "clicked barcode");
-                String test = sharedPreferences.getString("keySocketURL", null);
+                String test = sharedPreferences.getString("keySocketIp", null);
                 Log.d(TAG, test);
             }
         });
 
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (getCurrentFocus() != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
+        return super.dispatchTouchEvent(ev);
     }
 
 }

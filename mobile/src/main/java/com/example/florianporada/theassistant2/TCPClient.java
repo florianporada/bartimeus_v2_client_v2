@@ -7,9 +7,10 @@ import java.net.Socket;
 
 public class TCPClient {
 
+    private static final String TAG = "TCP_CLIENT";
     private String serverMessage;
-    public static final String SERVERIP = "192.168.2.100"; //your computer IP address
-    public static final int SERVERPORT = 4444;
+    private String serverIp = "192.168.2.100";
+    private int serverPort = 4444;
     private OnMessageReceived mMessageListener = null;
     private boolean mRun = false;
 
@@ -19,8 +20,10 @@ public class TCPClient {
     /**
      *  Constructor of the class. OnMessagedReceived listens for the messages received from server
      */
-    public TCPClient(OnMessageReceived listener) {
+    public TCPClient(OnMessageReceived listener, String socketIp, int socketPort) {
         mMessageListener = listener;
+        serverIp = socketIp;
+        serverPort = socketPort;
     }
 
     /**
@@ -44,12 +47,12 @@ public class TCPClient {
 
         try {
             //here you must put your computer's IP address.
-            InetAddress serverAddr = InetAddress.getByName(SERVERIP);
+            InetAddress serverAddr = InetAddress.getByName(serverIp);
 
             Log.e("TCP Client", "C: Connecting...");
 
             //create a socket to make the connection with the server
-            Socket socket = new Socket(serverAddr, SERVERPORT);
+            Socket socket = new Socket(serverAddr, serverPort);
 
             try {
 

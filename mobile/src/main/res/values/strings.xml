@@ -8,5 +8,7 @@
     <string name="title_activity_settings">SettingsActivity</string>
 
     <string name="settings_socketport">Socket port</string>
-    <string name="settings_socketurl">Socket URL</string>
+    <string name="settings_socketurl">Socket IP</string>
+    <string name="settings_save">Save</string>
+    <string name="settings_barcode">Barcode</string>
 </resources>
