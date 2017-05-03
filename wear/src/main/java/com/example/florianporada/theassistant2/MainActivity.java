@@ -1,6 +1,5 @@
 package com.example.florianporada.theassistant2;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +13,6 @@ import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.BoxInsetLayout;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -39,14 +37,27 @@ public class MainActivity extends WearableActivity implements
     private TextView mClockView;
     //private GoogleApiClient mGoogleApiClient;
 
+    private long[] StringArrayToLongArray(String[] numbers) {
+        long[] result = new long[numbers.length];
+        for (int i = 0; i < numbers.length; i++)
+            result[i] = Long.parseLong(numbers[i]);
+
+        return result;
+    }
+
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
             final String message = intent.getStringExtra("key");
+            long[] pattern = StringArrayToLongArray(message.split(";"));
+
+
             Log.v("BROADCASTRECEIVER", message);
             Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-            vibrations.ConvertMessageToVibrations(v, message);
+            //vibrations.ConvertMessageToVibrations(v, message);
+
+            v.vibrate(pattern, -1);
 
             runOnUiThread(new Runnable() {
 

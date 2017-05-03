@@ -92,6 +92,33 @@ public class MainActivity extends AppCompatActivity
         }.start();
     }
 
+    private void sendPatternToWear(final long[] pattern) {
+        final StringBuilder patternString = new StringBuilder();
+
+        for (int i = 0; i < pattern.length; i++) {
+            patternString.append(Long.toString(pattern[i])).append(";");
+        }
+
+        final String finalPatternString = patternString.toString();
+
+        new Thread() {
+            public void run() {
+                NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
+                for (Node node : nodes.getNodes()) {
+                    MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(mGoogleApiClient, node.getId(), TO_WEAR, finalPatternString.getBytes()).await();
+                    if (result.getStatus().isSuccess()) {
+                        Log.v(TAG, "Pattern: {" + patternString + "} sent to: " + node.getDisplayName());
+                    } else {
+                        // Log an error
+                        Log.v("TAG", "ERROR: failed to send Message");
+                    }
+                }
+            }
+        }.start();
+    }
+
+
+
     private void makeGoogleConnection() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
@@ -164,11 +191,10 @@ public class MainActivity extends AppCompatActivity
                 if (edittextDescription.getText() != null)
                 {
                     String toSend = edittextDescription.getText().toString();
-                    //sendNotification(view, toSend);
-                    //sendData();
+                    sendNotification(view, toSend);
                     Log.d("SEND DATA", "clicked");
                     //Requires a new thread to avoid blocking the UI
-                    sendMessageToWear(toSend);
+                    //sendMessageToWear(toSend);
                 }
             }
         });
@@ -182,8 +208,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        String test = sharedPreferences.getString("keySocketIp", "127.0.0.1");
-        Log.d(TAG, test);
+        String socketIp = sharedPreferences.getString("keySocketIp", "127.0.0.1");
+        Log.d(TAG, socketIp);
     }
 
     @Override
