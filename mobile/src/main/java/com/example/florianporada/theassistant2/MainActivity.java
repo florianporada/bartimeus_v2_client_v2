@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        String test = sharedPreferences.getString("keySocketURL", null);
+        String test = sharedPreferences.getString("keySocketIp", "127.0.0.1");
         Log.d(TAG, test);
     }
 
