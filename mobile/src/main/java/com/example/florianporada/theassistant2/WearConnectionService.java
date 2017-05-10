@@ -25,6 +25,7 @@ public class WearConnectionService extends Service implements GoogleApiClient.Co
     public WearConnectionService() {
     }
 
+    @Override
     public void onCreate(){
         super.onCreate();
         initGoogleClient();
@@ -32,9 +33,37 @@ public class WearConnectionService extends Service implements GoogleApiClient.Co
     }
 
     @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent.getStringExtra("VibrationPattern") != null) {
+            Log.v(TAG, intent.getStringExtra("VibrationPattern"));
+
+            long[] pattern = patternConverter(intent.getStringExtra("VibrationPattern"));
+
+            sendPatternToWear(pattern);
+        }
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Log.v(TAG, "google client api connected");
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
     }
 
 
@@ -94,18 +123,10 @@ public class WearConnectionService extends Service implements GoogleApiClient.Co
         mGoogleApiClient.connect();
     }
 
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        Log.v(TAG, "google client api connected");
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+    /**
+     * converts incoming string to vibration pattern
+     */
+    private long[] patternConverter(String string) {
+        return new long[] {200, 200, 200, 200};
     }
 }

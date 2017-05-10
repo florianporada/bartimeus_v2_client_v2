@@ -64,8 +64,12 @@ public class ServerConnectionService extends Service {
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
 
-            Log.v(TAG, Arrays.toString(values));
-            //sendMessageToWear(Arrays.toString(values));
+            Log.v(TAG, "Received Data from Server: " + Arrays.toString(values));
+
+            Intent intent = new Intent( getApplicationContext(), WearConnectionService.class );
+            intent.putExtra("VibrationPattern", Arrays.toString(values));
+
+            startService(intent);
         }
     }
 }
