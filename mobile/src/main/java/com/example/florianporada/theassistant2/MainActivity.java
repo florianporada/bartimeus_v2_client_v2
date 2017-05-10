@@ -1,6 +1,5 @@
 package com.example.florianporada.theassistant2;
 
-import android.app.Activity;
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
@@ -10,14 +9,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -27,16 +23,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.wearable.*;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity
@@ -92,7 +85,7 @@ public class MainActivity extends AppCompatActivity
         }.start();
     }
 
-    private void sendPatternToWear(final long[] pattern) {
+/*    private void sendPatternToWear(final long[] pattern) {
         final StringBuilder patternString = new StringBuilder();
 
         for (int i = 0; i < pattern.length; i++) {
@@ -115,7 +108,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }.start();
-    }
+    }*/
 
 
 
@@ -144,7 +137,7 @@ public class MainActivity extends AppCompatActivity
         mGoogleApiClient.connect();
     }
 
-    private void socketConnection() {
+/*    private void socketConnection() {
         try{
             client = new Socket("192.168.2.100", 4444);
             out = new PrintWriter(client.getOutputStream(),true);
@@ -156,7 +149,7 @@ public class MainActivity extends AppCompatActivity
         } catch(IOException e) {
             System.out.println("No I/O");
         }
-    }
+    }*/
 
 
     @Override
@@ -169,17 +162,33 @@ public class MainActivity extends AppCompatActivity
         final EditText edittextDescription = (EditText) findViewById(R.id.editText);
 
 
-        // get sharedpreferences
+        /**
+         * get shared preferences for socket ip and port
+         */
         sharedPreferences = getSharedPreferences(PREFERENCE_FILE_KEY, Context.MODE_PRIVATE);
 
         socketIp = sharedPreferences.getString("keySocketIp", "127.0.0.1");
         socketPort = sharedPreferences.getInt("keySocketPort", 3030);
 
         //connect to google play service
-        makeGoogleConnection();
+        //makeGoogleConnection();
 
         // connect to the server
-        new connectTask().execute("");
+        //new connectTask().execute("");
+
+        /**
+         * starting service for the google wear connection
+         */
+        Intent wearConnectionIntent = new Intent(this, WearConnectionService.class);
+        startService(wearConnectionIntent);
+
+        /**
+         * starting the service for the server connection
+         */
+        Intent serverConnectionIntent = new Intent(this, ServerConnectionService.class);
+        startService(serverConnectionIntent);
+
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

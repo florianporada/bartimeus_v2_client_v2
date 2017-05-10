@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class SettingsActivity extends AppCompatActivity {
     private static final String TAG = "SETTINGS_ACTIVITY";
@@ -62,6 +63,7 @@ public class SettingsActivity extends AppCompatActivity {
                     sharedPreferencesEditor.putString("keySocketIp", mSocketIp.getText().toString());
                     sharedPreferencesEditor.putInt("keySocketPort", Integer.parseInt(mSocketPort.getText().toString()));
                     Log.d(TAG, sharedPreferencesEditor.commit() + "");
+                    Toast.makeText(SettingsActivity.this, getResources().getString(R.string.settings_toast_save), Toast.LENGTH_LONG).show();
                 }
             }
         });

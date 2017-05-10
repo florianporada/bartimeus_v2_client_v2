@@ -11,4 +11,6 @@
     <string name="settings_socketurl">Socket IP</string>
     <string name="settings_save">Save</string>
     <string name="settings_barcode">Barcode</string>
+    <string name="settings_toast_save">Saved settings!</string>
+
 </resources>

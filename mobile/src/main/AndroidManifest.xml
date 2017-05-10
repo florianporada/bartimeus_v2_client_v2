@@ -20,7 +20,6 @@
         <meta-data
                 android:name="com.google.android.gms.version"
                 android:value="@integer/google_play_services_version"/>
-
         <meta-data
                 android:name="com.google.android.gms.vision.DEPENDENCIES"
                 android:value="barcode"/>
@@ -44,6 +43,17 @@
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value="com.example.florianporada.theassistant2.MainActivity"/>
         </activity>
+
+        <service
+                android:name=".ServerConnectionService"
+                android:enabled="true"
+                android:exported="true">
+        </service>
+        <service
+                android:name=".WearConnectionService"
+                android:enabled="true"
+                android:exported="true">
+        </service>
     </application>
 
 </manifest>
