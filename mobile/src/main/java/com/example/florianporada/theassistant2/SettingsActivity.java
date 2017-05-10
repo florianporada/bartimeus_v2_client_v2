@@ -1,6 +1,7 @@
 package com.example.florianporada.theassistant2;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -58,12 +59,14 @@ public class SettingsActivity extends AppCompatActivity {
         mSettingsSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "clicked save");
                 if (!mSocketIp.getText().toString().matches("") && !mSocketPort.getText().toString().matches("")) {
                     sharedPreferencesEditor.putString("keySocketIp", mSocketIp.getText().toString());
                     sharedPreferencesEditor.putInt("keySocketPort", Integer.parseInt(mSocketPort.getText().toString()));
                     Log.d(TAG, sharedPreferencesEditor.commit() + "");
+
                     Toast.makeText(SettingsActivity.this, getResources().getString(R.string.settings_toast_save), Toast.LENGTH_LONG).show();
+
+                    stopService(new Intent(getApplicationContext(), ServerConnectionService.class));
                 }
             }
         });

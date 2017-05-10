@@ -20,8 +20,6 @@ public class ServerConnectionService extends Service {
     private TCPClient mTcpClient;
     private SharedPreferences sharedPreferences;
 
-
-
     public ServerConnectionService() {
     }
 

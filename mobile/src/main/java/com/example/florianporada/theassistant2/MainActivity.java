@@ -33,20 +33,12 @@ import java.net.Socket;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "MAIN_ACTIVITY";
     private static final String TO_WEAR = "/to_wear";
     private static final String PREFERENCE_FILE_KEY = "TheAssistantFile";
 
-    private GoogleApiClient mGoogleApiClient;
-    private TCPClient mTcpClient;
-
-    private Socket client;
-    private PrintWriter out;
-    private BufferedReader in;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedPreferencesEditor;
     private String socketIp;
@@ -68,7 +60,7 @@ public class MainActivity extends AppCompatActivity
         notificationManager.notify(notificationId, notification);
     }
 
-    private void sendMessageToWear(final String message) {
+/*    private void sendMessageToWear(final String message) {
         new Thread() {
             public void run() {
                 NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
@@ -78,77 +70,11 @@ public class MainActivity extends AppCompatActivity
                         Log.v(TAG, "Message: {" + message + "} sent to: " + node.getDisplayName());
                     } else {
                         // Log an error
-                        Log.v("TAG", "ERROR: failed to send Message");
+                        Log.e(TAG, "ERROR: failed to send Message");
                     }
                 }
             }
         }.start();
-    }
-
-/*    private void sendPatternToWear(final long[] pattern) {
-        final StringBuilder patternString = new StringBuilder();
-
-        for (int i = 0; i < pattern.length; i++) {
-            patternString.append(Long.toString(pattern[i])).append(";");
-        }
-
-        final String finalPatternString = patternString.toString();
-
-        new Thread() {
-            public void run() {
-                NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
-                for (Node node : nodes.getNodes()) {
-                    MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(mGoogleApiClient, node.getId(), TO_WEAR, finalPatternString.getBytes()).await();
-                    if (result.getStatus().isSuccess()) {
-                        Log.v(TAG, "Pattern: {" + patternString + "} sent to: " + node.getDisplayName());
-                    } else {
-                        // Log an error
-                        Log.v("TAG", "ERROR: failed to send Message");
-                    }
-                }
-            }
-        }.start();
-    }*/
-
-
-
-    private void makeGoogleConnection() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                    @Override
-                    public void onConnected(Bundle connectionHint) {
-                        Log.d(TAG, "onConnected: " + connectionHint);
-                        // Now you can use the data layer API
-                    }
-                    @Override
-                    public void onConnectionSuspended(int cause) {
-                        Log.d(TAG, "onConnectionSuspended: " + cause);
-                    }
-                })
-                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(ConnectionResult result) {
-                        Log.d(TAG, "onConnectionFailed: " + result);
-                    }
-                })
-                .addApi(Wearable.API)
-                .build();
-
-        mGoogleApiClient.connect();
-    }
-
-/*    private void socketConnection() {
-        try{
-            client = new Socket("192.168.2.100", 4444);
-            out = new PrintWriter(client.getOutputStream(),true);
-            in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-
-        } catch(UnknownHostException e) {
-            System.out.println("Unknown host: 192.168.2.100");
-
-        } catch(IOException e) {
-            System.out.println("No I/O");
-        }
     }*/
 
 
@@ -170,12 +96,6 @@ public class MainActivity extends AppCompatActivity
         socketIp = sharedPreferences.getString("keySocketIp", "127.0.0.1");
         socketPort = sharedPreferences.getInt("keySocketPort", 3030);
 
-        //connect to google play service
-        //makeGoogleConnection();
-
-        // connect to the server
-        //new connectTask().execute("");
-
         /**
          * starting service for the google wear connection
          */
@@ -187,8 +107,6 @@ public class MainActivity extends AppCompatActivity
          */
         Intent serverConnectionIntent = new Intent(this, ServerConnectionService.class);
         startService(serverConnectionIntent);
-
-
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -216,9 +134,6 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        String socketIp = sharedPreferences.getString("keySocketIp", "127.0.0.1");
-        Log.d(TAG, socketIp);
     }
 
     @Override
@@ -280,23 +195,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        final String message = "Hello wearable\n Via the data layer";
-        //Requires a new thread to avoid blocking the UI
-        sendMessageToWear(message);
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (getCurrentFocus() != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -304,40 +202,4 @@ public class MainActivity extends AppCompatActivity
         }
         return super.dispatchTouchEvent(ev);
     }
-
-    public class connectTask extends AsyncTask<String,String,TCPClient> {
-
-        @Override
-        protected TCPClient doInBackground(String... message) {
-
-            //we create a TCPClient object and
-            mTcpClient = new TCPClient(new TCPClient.OnMessageReceived() {
-                @Override
-                //here the messageReceived method is implemented
-                public void messageReceived(String message) {
-                    //this method calls the onProgressUpdate
-                    publishProgress(message);
-                }
-            }, socketIp, socketPort);
-
-            mTcpClient.run();
-
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(String... values) {
-            super.onProgressUpdate(values);
-
-            Log.v(TAG, Arrays.toString(values));
-            sendMessageToWear(Arrays.toString(values));
-
-            //in the arrayList we add the messaged received from server
-            //arrayList.add(values[0]);
-            // notify the adapter that the data set has changed. This means that new message received
-            // from server was added to the list
-            //mAdapter.notifyDataSetChanged();
-        }
-    }
-
 }
