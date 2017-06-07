@@ -52,7 +52,9 @@ public class TCPClient {
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
-    public void stopClient(){
+    public void stopClient() {
+        Log.d(TAG, "TCPClient stopped");
+
         mRun = false;
     }
 

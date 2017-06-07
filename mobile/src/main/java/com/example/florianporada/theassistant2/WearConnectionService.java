@@ -83,7 +83,6 @@ public class WearConnectionService extends Service implements GoogleApiClient.Co
 
     }
 
-
     /**
      * sends a long array for the pattern to the connected android wear
      */
@@ -146,15 +145,16 @@ public class WearConnectionService extends Service implements GoogleApiClient.Co
     private long[] patternConverter(String string) {
         // referecnce : E/WEAR_CONNECTION_SERVICE: Error tansforming the pattern: [5|Ring| A known person is at the door|patternlayout: 200,200,500,200,400]
 
+        string = string.split("patternlayout")[string.split("patternlayout:").length - 1];
         String[] stringPattern = string.split(",");
         long[] pattern = new long[stringPattern.length];
 
-
         for (int i = 0; i < stringPattern.length; i++){
             try {
-                pattern[i] = Long.parseLong(stringPattern[i]);
+                String convertedString = stringPattern[i].replaceAll("[^0-9]","");
+                pattern[i] = Long.parseLong(convertedString);
             } catch (Exception e) {
-                Log.e(TAG, "Error tansforming the pattern: " + string);
+                Log.e(TAG, "Error tansforming the pattern: " + stringPattern[i] + " e: " + e);
             }
         }
 
@@ -172,7 +172,7 @@ public class WearConnectionService extends Service implements GoogleApiClient.Co
         sendStatusBroadcast(intent);
     }
 
-    private void sendStatusBroadcast(Intent intent){
+    private void sendStatusBroadcast(Intent intent) {
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }

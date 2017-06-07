@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -53,8 +54,8 @@ public class MainActivity extends AppCompatActivity
     private ImageView ivWear;
     private ImageView ivServer;
 
-    private Button bReloadWear;
-    private Button bReloadServer;
+    private ImageButton bReloadWear;
+    private ImageButton bReloadServer;
 
     private void sendNotification(View view, String string) {
         String toSend = string;
@@ -63,6 +64,7 @@ public class MainActivity extends AppCompatActivity
         Notification notification = new NotificationCompat.Builder(getApplication())
                 .setSmallIcon(R.drawable.logo)
                 .setContentTitle("Info")
+                .setVibrate(new long[] { 1000, 1000})
                 .setContentText(toSend)
                 .extend(new NotificationCompat.WearableExtender().setHintShowBackgroundOnly(true))
                 .build();
@@ -92,8 +94,6 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void onReceive(Context context, Intent intent) {
             isWearConnected = intent.getBooleanExtra("wearStatus", false);
-            isServerConnected = intent.getBooleanExtra("serverStatus", false);
-
             if (isWearConnected) {
                 runOnUiThread(new Runnable() {
                     @Override
@@ -101,8 +101,11 @@ public class MainActivity extends AppCompatActivity
                         ivWear.setImageResource(android.R.drawable.presence_online);
                     }
                 });
+                Log.d(TAG, "Wearable connected: " + String.valueOf(intent.getBooleanExtra("wearStatus", false)));
+
             }
 
+            isServerConnected = intent.getBooleanExtra("serverStatus", false);
             if (isServerConnected) {
                 runOnUiThread(new Runnable() {
                     @Override
@@ -110,16 +113,14 @@ public class MainActivity extends AppCompatActivity
                         ivServer.setImageResource(android.R.drawable.presence_online);
                     }
                 });
+                Log.d(TAG, "Server connected: " + String.valueOf(intent.getBooleanExtra("serverStatus", false)));
             }
-
-            Log.d(TAG, "Wearable connected: " + String.valueOf(intent.getBooleanExtra("wearStatus", false)));
-            Log.d(TAG, "Server connected: " + String.valueOf(intent.getBooleanExtra("serverStatus", false)));
-
         }
     };
 
     private void startServerService () {
         Intent serverConnectionIntent = new Intent(this, ServerConnectionService.class);
+        serverConnectionIntent.putExtra("reloadServerService", true);
         startService(serverConnectionIntent);
     }
 
@@ -148,8 +149,8 @@ public class MainActivity extends AppCompatActivity
         /**
          * reload buttons
          */
-        bReloadServer = (Button) findViewById(R.id.reloadServer);
-        bReloadWear = (Button) findViewById(R.id.reloadWear);
+        bReloadServer = (ImageButton) findViewById(R.id.reloadServer);
+        bReloadWear = (ImageButton) findViewById(R.id.reloadWear);
 
         /**
          * onclick listener reload buttons
@@ -158,6 +159,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 startServerService();
+                Snackbar.make(view, R.string.reloaded_server_service, Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
         });
 
@@ -165,6 +168,8 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 startWearableService();
+                Snackbar.make(view, R.string.reloaded_wearable_service, Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
         });
 
@@ -252,6 +257,9 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+            startActivity(intent);
+
             return true;
         }
 
@@ -265,19 +273,15 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
             Intent intent = new Intent(getApplicationContext(), BarcodeActivity.class);
             startActivity(intent);
+        } else if (id == R.id.nav_gallery) {
+
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
             Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
             startActivity(intent);
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

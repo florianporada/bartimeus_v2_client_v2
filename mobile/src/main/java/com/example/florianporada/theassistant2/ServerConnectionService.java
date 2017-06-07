@@ -8,6 +8,9 @@ import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.Wearable;
 
 import java.util.Arrays;
 
@@ -19,6 +22,7 @@ public class ServerConnectionService extends Service {
     private String socketIp;
     private int socketPort;
     private TCPClient mTcpClient;
+    private connectTask mTask;
     private SharedPreferences sharedPreferences;
 
     public ServerConnectionService() {}
@@ -31,8 +35,20 @@ public class ServerConnectionService extends Service {
         socketIp = sharedPreferences.getString("keySocketIp", "127.0.0.1");
         socketPort = sharedPreferences.getInt("keySocketPort", 3030);
 
-        new connectTask().execute("");
         Log.v(TAG, "serverConnectionService is running now");
+
+        mTask = new connectTask();
+        mTask.execute("");
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent.getBooleanExtra("reloadServerService", false)) {
+            mTask = new connectTask();
+            mTask.execute("");
+        }
+
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
@@ -53,10 +69,8 @@ public class ServerConnectionService extends Service {
 
 
     public class connectTask extends AsyncTask<String,String,TCPClient> {
-
         @Override
         protected TCPClient doInBackground(String... message) {
-
             //we create a TCPClient object and
             mTcpClient = new TCPClient(new TCPClient.OnMessageReceived() {
                 @Override
@@ -68,6 +82,10 @@ public class ServerConnectionService extends Service {
             }, socketIp, socketPort, getApplicationContext());
 
             mTcpClient.run();
+
+            if (isCancelled()) {
+                mTcpClient.stopClient();
+            }
 
             return null;
         }
