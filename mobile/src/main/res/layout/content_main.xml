@@ -17,11 +17,58 @@
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hello World!"/>
+            android:text="@string/send_to_wearable"/>
     <EditText
             android:id="@+id/editText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp" android:layout_below="@+id/textView2"
+            android:layout_marginTop="24dp"
             android:layout_alignParentStart="true"/>
+    <LinearLayout
+            android:id="@+id/serverContainer"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/editText"
+            android:layout_alignParentStart="true" android:layout_marginTop="15dp">
+        <TextView
+                android:text="@string/dashboard_server_connection"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/box_size"
+                android:id="@+id/textViewServerConnection" android:gravity="center_vertical|start" android:layout_weight="0.8"
+                android:textSize="18sp"/>
+        <Button
+                android:layout_width="@dimen/box_size"
+                android:layout_height="@dimen/box_size"
+                android:id="@+id/reloadServer" android:background="@drawable/cast_ic_notification_forward"
+                android:layout_weight="0.1" android:elevation="24dp"/>
+        <ImageView
+                android:layout_width="@dimen/box_size"
+                android:layout_height="@dimen/box_size" app:srcCompat="@android:drawable/presence_offline"
+                android:id="@+id/imageViewServer" android:layout_gravity="end" android:layout_weight="0.1"/>
+    </LinearLayout>
+    <LinearLayout
+            android:id="@+id/wearContainer"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp" android:layout_below="@+id/serverContainer"
+            android:layout_alignParentStart="true">
+        <TextView
+                android:text="@string/dashboard_wear_connection"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/box_size"
+                android:id="@+id/textViewWearConnection" android:gravity="center_vertical|start" android:layout_weight="0.8"
+                android:textSize="18sp" android:textAlignment="viewStart"/>
+        <Button
+                android:layout_width="@dimen/box_size"
+                android:layout_height="@dimen/box_size"
+                android:id="@+id/reloadWear" android:background="@drawable/cast_ic_notification_forward"
+                android:layout_weight="0.1"/>
+        <ImageView
+                android:layout_width="@dimen/box_size"
+                android:layout_height="@dimen/box_size" app:srcCompat="@android:drawable/presence_offline"
+                android:id="@+id/imageViewWear" android:layout_gravity="end" android:layout_weight="0.1"
+        />
+    </LinearLayout>
 </RelativeLayout>

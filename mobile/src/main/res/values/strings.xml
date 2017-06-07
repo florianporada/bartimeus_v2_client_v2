@@ -5,6 +5,8 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <string name="send_to_wearable">Send to wearable:</string>
+
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings">SettingsActivity</string>
 
@@ -13,5 +15,8 @@
     <string name="settings_save">Save</string>
     <string name="settings_barcode">Barcode</string>
     <string name="settings_toast_save">Saved settings!</string>
+    <string name="title_activity_barcode">BarcodeActivity</string>
 
+    <string name="dashboard_server_connection">Server connection</string>
+    <string name="dashboard_wear_connection">Wearable connection</string>
 </resources>

@@ -1,15 +1,15 @@
 package com.example.florianporada.theassistant2;
 
 import android.app.Notification;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -23,13 +23,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.*;
 
 import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity
@@ -43,15 +47,22 @@ public class MainActivity extends AppCompatActivity
     private SharedPreferences.Editor sharedPreferencesEditor;
     private String socketIp;
     private int socketPort;
+    private boolean isWearConnected = false;
+    private boolean isServerConnected = false;
 
+    private ImageView ivWear;
+    private ImageView ivServer;
 
-    public void sendNotification(View view, String string) {
+    private Button bReloadWear;
+    private Button bReloadServer;
+
+    private void sendNotification(View view, String string) {
         String toSend = string;
         if(toSend.isEmpty())
             toSend = "You sent an empty notification";
         Notification notification = new NotificationCompat.Builder(getApplication())
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("Here you Go")
+                .setSmallIcon(R.drawable.logo)
+                .setContentTitle("Info")
                 .setContentText(toSend)
                 .extend(new NotificationCompat.WearableExtender().setHintShowBackgroundOnly(true))
                 .build();
@@ -77,6 +88,47 @@ public class MainActivity extends AppCompatActivity
         }.start();
     }*/
 
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            isWearConnected = intent.getBooleanExtra("wearStatus", false);
+            isServerConnected = intent.getBooleanExtra("serverStatus", false);
+
+            if (isWearConnected) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ivWear.setImageResource(android.R.drawable.presence_online);
+                    }
+                });
+            }
+
+            if (isServerConnected) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ivServer.setImageResource(android.R.drawable.presence_online);
+                    }
+                });
+            }
+
+            Log.d(TAG, "Wearable connected: " + String.valueOf(intent.getBooleanExtra("wearStatus", false)));
+            Log.d(TAG, "Server connected: " + String.valueOf(intent.getBooleanExtra("serverStatus", false)));
+
+        }
+    };
+
+    private void startServerService () {
+        Intent serverConnectionIntent = new Intent(this, ServerConnectionService.class);
+        startService(serverConnectionIntent);
+    }
+
+    private void startWearableService () {
+        Intent wearConnectionIntent = new Intent(this, WearConnectionService.class);
+        wearConnectionIntent.putExtra("reloadWearableService", true);
+        startService(wearConnectionIntent);
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +137,36 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        final EditText edittextDescription = (EditText) findViewById(R.id.editText);
+        final EditText editTextDescription = (EditText) findViewById(R.id.editText);
+
+        /**
+         * indicator for server/wear connection
+         */
+        ivServer = (ImageView) findViewById(R.id.imageViewServer);
+        ivWear = (ImageView) findViewById(R.id.imageViewWear);
+
+        /**
+         * reload buttons
+         */
+        bReloadServer = (Button) findViewById(R.id.reloadServer);
+        bReloadWear = (Button) findViewById(R.id.reloadWear);
+
+        /**
+         * onclick listener reload buttons
+         */
+        bReloadServer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startServerService();
+            }
+        });
+
+        bReloadWear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startWearableService();
+            }
+        });
 
 
         /**
@@ -99,14 +180,25 @@ public class MainActivity extends AppCompatActivity
         /**
          * starting service for the google wear connection
          */
-        Intent wearConnectionIntent = new Intent(this, WearConnectionService.class);
-        startService(wearConnectionIntent);
+        startWearableService();
 
         /**
          * starting the service for the server connection
          */
-        Intent serverConnectionIntent = new Intent(this, ServerConnectionService.class);
-        startService(serverConnectionIntent);
+        startServerService();
+
+
+        /**
+         * start intent filter for server connection check
+         */
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("serverStatus"));
+
+        /**
+         * start intent filter for wearable connection check
+         */
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("wearStatus"));
+
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -114,14 +206,12 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view) {
                 /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();*/
-                Log.d("SEND", edittextDescription.getText().toString());
-                if (edittextDescription.getText() != null)
-                {
-                    String toSend = edittextDescription.getText().toString();
+                if (editTextDescription.getText() != null) {
+                    String toSend = editTextDescription.getText().toString();
                     sendNotification(view, toSend);
-                    Log.d("SEND DATA", "clicked");
-                    //Requires a new thread to avoid blocking the UI
-                    //sendMessageToWear(toSend);
+                } else {
+                    Snackbar.make(view, "Please enter some text", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
                 }
             }
         });
@@ -177,7 +267,8 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_camera) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
-
+            Intent intent = new Intent(getApplicationContext(), BarcodeActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.util.Arrays;
@@ -20,9 +21,9 @@ public class ServerConnectionService extends Service {
     private TCPClient mTcpClient;
     private SharedPreferences sharedPreferences;
 
-    public ServerConnectionService() {
-    }
+    public ServerConnectionService() {}
 
+    @Override
     public void onCreate(){
         super.onCreate();
         sharedPreferences = getSharedPreferences(PREFERENCE_FILE_KEY, Context.MODE_PRIVATE);
@@ -40,6 +41,17 @@ public class ServerConnectionService extends Service {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
+    private void broadcastServerStatus(boolean status) {
+        Intent intent = new Intent("serverStatus");
+        intent.putExtra("serverStatus",  status);
+        sendStatusBroadcast(intent);
+    }
+
+    private void sendStatusBroadcast(Intent intent){
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+
     public class connectTask extends AsyncTask<String,String,TCPClient> {
 
         @Override
@@ -53,7 +65,7 @@ public class ServerConnectionService extends Service {
                     //this method calls the onProgressUpdate
                     publishProgress(message);
                 }
-            }, socketIp, socketPort);
+            }, socketIp, socketPort, getApplicationContext());
 
             mTcpClient.run();
 
@@ -64,9 +76,9 @@ public class ServerConnectionService extends Service {
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
 
-            Log.v(TAG, "Received Data from Server: " + Arrays.toString(values));
+            Log.d(TAG, "Received Data from Server: " + Arrays.toString(values));
 
-            Intent intent = new Intent( getApplicationContext(), WearConnectionService.class );
+            Intent intent = new Intent(getApplicationContext(), WearConnectionService.class);
             intent.putExtra("VibrationPattern", Arrays.toString(values));
 
             startService(intent);

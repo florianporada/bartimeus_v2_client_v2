@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
@@ -34,12 +36,27 @@ public class WearConnectionService extends Service implements GoogleApiClient.Co
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent.getBooleanExtra("reloadWearableService", false)) {
+            Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
+                @Override
+                public void onResult(NodeApi.GetConnectedNodesResult nodes) {
+                    if (nodes.getNodes().size() > 0) {
+                        broadcastWearStatus(true);
+                    } else {
+                        broadcastWearStatus(false);
+                    }
+                }
+            });
+        }
+
         if (intent.getStringExtra("VibrationPattern") != null) {
             Log.v(TAG, intent.getStringExtra("VibrationPattern"));
 
             long[] pattern = patternConverter(intent.getStringExtra("VibrationPattern"));
 
-            sendPatternToWear(pattern);
+            if (pattern.length > 0) {
+                sendPatternToWear(pattern);
+            }
         }
 
         return super.onStartCommand(intent, flags, startId);
@@ -98,7 +115,7 @@ public class WearConnectionService extends Service implements GoogleApiClient.Co
     /**
      * initializes the google client, which is required for the android wear connection
      */
-    public void initGoogleClient() {
+    private void initGoogleClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                     @Override
@@ -127,6 +144,35 @@ public class WearConnectionService extends Service implements GoogleApiClient.Co
      * converts incoming string to vibration pattern
      */
     private long[] patternConverter(String string) {
-        return new long[] {200, 200, 200, 200};
+        // referecnce : E/WEAR_CONNECTION_SERVICE: Error tansforming the pattern: [5|Ring| A known person is at the door|patternlayout: 200,200,500,200,400]
+
+        String[] stringPattern = string.split(",");
+        long[] pattern = new long[stringPattern.length];
+
+
+        for (int i = 0; i < stringPattern.length; i++){
+            try {
+                pattern[i] = Long.parseLong(stringPattern[i]);
+            } catch (Exception e) {
+                Log.e(TAG, "Error tansforming the pattern: " + string);
+            }
+        }
+
+        Log.d(TAG, "Transformed pattern: " + pattern.length);
+
+        return pattern;
+    }
+
+    /**
+     * send intent
+     */
+    private void broadcastWearStatus(boolean status) {
+        Intent intent = new Intent("wearStatus");
+        intent.putExtra("wearStatus",  status);
+        sendStatusBroadcast(intent);
+    }
+
+    private void sendStatusBroadcast(Intent intent){
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }

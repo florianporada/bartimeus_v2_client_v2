@@ -14,7 +14,7 @@
             app:layout_box="all"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="@string/hello_world"
+            android:text="@string/welcome"
             android:gravity="center"/>
 
     <TextView

@@ -1,5 +1,8 @@
 package com.example.florianporada.theassistant2;
 
+import android.content.Context;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import java.io.*;
 import java.net.InetAddress;
@@ -13,6 +16,7 @@ public class TCPClient {
     private int serverPort = 4444;
     private OnMessageReceived mMessageListener = null;
     private boolean mRun = false;
+    private Context context;
 
     PrintWriter out;
     BufferedReader in;
@@ -20,10 +24,11 @@ public class TCPClient {
     /**
      *  Constructor of the class. OnMessagedReceived listens for the messages received from server
      */
-    public TCPClient(OnMessageReceived listener, String socketIp, int socketPort) {
+    public TCPClient(OnMessageReceived listener, String socketIp, int socketPort, Context context) {
         mMessageListener = listener;
         serverIp = socketIp;
         serverPort = socketPort;
+        this.context = context;
     }
 
     /**
@@ -35,6 +40,16 @@ public class TCPClient {
             out.println(message);
             out.flush();
         }
+    }
+
+    private void broadcastServerStatus(boolean status) {
+        Intent intent = new Intent("serverStatus");
+        intent.putExtra("serverStatus",  status);
+        sendStatusBroadcast(intent);
+    }
+
+    private void sendStatusBroadcast(Intent intent){
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
     public void stopClient(){
@@ -55,13 +70,14 @@ public class TCPClient {
             Socket socket = new Socket(serverAddr, serverPort);
 
             try {
-
                 //send the message to the server
                 out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 
                 Log.v(TAG, "C: Sent.");
 
                 Log.v(TAG, "C: Done.");
+
+                broadcastServerStatus(true);
 
                 //receive the message which the server sends back
                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -92,9 +108,9 @@ public class TCPClient {
             }
 
         } catch (Exception e) {
-
             Log.e(TAG, "C: Error", e);
 
+            broadcastServerStatus(false);
         }
 
     }
@@ -102,6 +118,6 @@ public class TCPClient {
     //Declare the interface. The method messageReceived(String message) will must be implemented in the MyActivity
     //class at on asynckTask doInBackground
     public interface OnMessageReceived {
-        public void messageReceived(String message);
+        void messageReceived(String message);
     }
 }
