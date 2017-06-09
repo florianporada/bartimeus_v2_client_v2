@@ -15,7 +15,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="@string/welcome"
-            android:gravity="center"/>
+            android:gravity="center" android:textSize="36sp" android:textStyle="normal|bold"
+            android:textAlignment="center" android:textAllCaps="true"/>
 
     <TextView
             android:id="@+id/clock"

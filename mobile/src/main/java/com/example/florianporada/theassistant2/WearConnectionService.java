@@ -67,11 +67,8 @@ public class WearConnectionService extends Service implements GoogleApiClient.Co
             if (intent.getStringExtra("VibrationPattern") != null) {
                 Log.v(TAG, intent.getStringExtra("VibrationPattern"));
 
-                long[] pattern = patternConverter(intent.getStringExtra("VibrationPattern"));
+                sendPatternToWear(intent.getStringExtra("VibrationPattern"));
 
-                if (pattern.length > 0) {
-                    sendPatternToWear(pattern);
-                }
             }
         }
 
@@ -102,14 +99,25 @@ public class WearConnectionService extends Service implements GoogleApiClient.Co
     /**
      * sends a long array for the pattern to the connected android wear
      */
-    private void sendPatternToWear(final long[] pattern) {
+    private void sendPatternToWear(final String message) {
         final StringBuilder patternString = new StringBuilder();
+        String notification = "no notification found";
+        long[] pattern = patternConverter(message);
+
+        try {
+            notification = message.split(Pattern.quote("|"))[1].trim().toLowerCase();
+
+        } catch (Exception e) {
+            Log.e(TAG, "sendPatternToWear: no notification found in message string", e);
+        }
+
 
         for (int i = 0; i < pattern.length; i++) {
             patternString.append(Long.toString(pattern[i])).append(";");
         }
 
-        final String finalPatternString = patternString.toString();
+        final String finalPatternString = patternString.toString() + "notification:" + notification;
+        final String finalNotification = notification;
 
         new Thread() {
             public void run() {
@@ -117,7 +125,7 @@ public class WearConnectionService extends Service implements GoogleApiClient.Co
                 for (Node node : nodes.getNodes()) {
                     MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(mGoogleApiClient, node.getId(), TO_WEAR, finalPatternString.getBytes()).await();
                     if (result.getStatus().isSuccess()) {
-                        Log.v(TAG, "Pattern: {" + patternString + "} sent to: " + node.getDisplayName());
+                        Log.v(TAG, "Pattern: {" + patternString + "} and notification: " + finalNotification + " sent to: " + node.getDisplayName());
                     } else {
                         // Log an error
                         Log.v("TAG", "ERROR: failed to send Message");
@@ -218,7 +226,6 @@ public class WearConnectionService extends Service implements GoogleApiClient.Co
                 break;
             default:
                 pattern = new long[] {PAUSE_MEDIUM, VIBRATE_SHORT, PAUSE_SHORT, VIBRATE_SHORT, PAUSE_SHORT, VIBRATE_SHORT, PAUSE_SHORT, VIBRATE_SHORT};
-                break;
         }
 
         return pattern;

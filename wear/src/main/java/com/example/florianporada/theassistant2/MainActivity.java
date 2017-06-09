@@ -22,13 +22,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import static android.graphics.Color.*;
+
 public class MainActivity extends WearableActivity implements
         DataApi.DataListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
-    private static final SimpleDateFormat AMBIENT_DATE_FORMAT =
-            new SimpleDateFormat("HH:mm:ss", Locale.US);
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final SimpleDateFormat AMBIENT_DATE_FORMAT = new SimpleDateFormat("HH:mm:ss", Locale.US);
 
     private VibrationPatterns vibrations = new VibrationPatterns();
 
@@ -49,24 +51,8 @@ public class MainActivity extends WearableActivity implements
         @Override
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
-            final String message = intent.getStringExtra("key");
-            long[] pattern = StringArrayToLongArray(message.split(";"));
-
-
-            Log.v("BROADCASTRECEIVER", message);
-            Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-            //vibrations.ConvertMessageToVibrations(v, message);
-
-            v.vibrate(pattern, -1);
-
-            runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    TextView tv = (TextView) findViewById(R.id.text);//Text To be edited
-                    tv.setText(message);//Set the Text
-                }
-            });
+            String message = intent.getStringExtra("key");
+            startNotifier(message);
         }
     };
 
@@ -96,18 +82,18 @@ public class MainActivity extends WearableActivity implements
     @Override
     public void onEnterAmbient(Bundle ambientDetails) {
         super.onEnterAmbient(ambientDetails);
-        updateDisplay();
+        //updateDisplay();
     }
 
     @Override
     public void onUpdateAmbient() {
         super.onUpdateAmbient();
-        updateDisplay();
+        //updateDisplay();
     }
 
     @Override
     public void onExitAmbient() {
-        updateDisplay();
+        //updateDisplay();
         super.onExitAmbient();
     }
 
@@ -153,5 +139,60 @@ public class MainActivity extends WearableActivity implements
     @Override
     public void onDataChanged(DataEventBuffer dataEventBuffer) {
 
+    }
+
+    public void startNotifier(String string) {
+
+        final String message = string;
+        final String notificationText = string.split("notification:")[string.split("notification:").length - 1].trim();
+        final String notificationPattern = string.split("notification:")[0].trim();
+        long[] pattern = StringArrayToLongArray(notificationPattern.split(";"));
+
+        Log.d(TAG, "startNotifier: " + notificationText + " " + notificationPattern);
+
+        Log.d(TAG, "startNotifier: " + message);
+        Vibrator v = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+        //vibrations.ConvertMessageToVibrations(v, message);
+
+        v.vibrate(pattern, -1);
+
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                TextView tv = (TextView) findViewById(R.id.text);
+                tv.setText(notificationText);
+                int color;
+
+                switch (notificationText) {
+                    case "wrong ring":
+                        color = RED;
+                        break;
+                    case "ring":
+                        color = YELLOW;
+                        break;
+                    case "motion":
+                        color = BLUE;
+                        break;
+                    case "warning notification":
+                        color = MAGENTA;
+                        break;
+                    case "incomming":
+                    case "test":
+                    default:
+                        color = WHITE;
+                }
+
+                mContainerView.setBackgroundColor(color);
+                new android.os.Handler().postDelayed(
+                    new Runnable() {
+                        public void run() {
+                            TextView tv = (TextView) findViewById(R.id.text);
+                            tv.setText("WELCOME");
+                            mContainerView.setBackgroundColor(WHITE);
+                        }
+                    },10000);
+            }
+        });
     }
 }
