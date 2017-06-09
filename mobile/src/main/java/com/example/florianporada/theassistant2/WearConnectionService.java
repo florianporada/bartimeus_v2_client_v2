@@ -17,6 +17,8 @@ import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
+import java.util.regex.Pattern;
+
 public class WearConnectionService extends Service implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = "WEAR_CONNECTION_SERVICE";
@@ -176,8 +178,9 @@ public class WearConnectionService extends Service implements GoogleApiClient.Co
 
         long[] pattern;
         int id = -1;
-        //string = string.split(new Character('|').toString())[string.split(new Character('|').toString()).length - 1].replaceAll("[^0-9]","");
-        string = string.replaceAll("[^0-9]","");
+        string = string.split(Pattern.quote("|"))[0].replaceAll("[^0-9]","");
+
+        Log.d(TAG, "patternConverter: " + string);
 
         try {
             id = Integer.parseInt(string);
