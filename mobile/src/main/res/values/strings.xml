@@ -6,6 +6,8 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="send_to_wearable">Send notification:</string>
+    <string name="enter_text">Please enter some text</string>
+
 
     <string name="reloaded_wearable_service">Reloaded wearable service</string>
     <string name="reloaded_server_service">Reloaded server service</string>

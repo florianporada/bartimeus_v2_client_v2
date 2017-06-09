@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity
 
     private ImageButton bReloadWear;
     private ImageButton bReloadServer;
+    private ImageButton bSendNotification;
 
     private void sendNotification(View view, String string) {
         String toSend = string;
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity
         Notification notification = new NotificationCompat.Builder(getApplication())
                 .setSmallIcon(R.drawable.logo)
                 .setContentTitle("Info")
-                .setVibrate(new long[] { 1000, 1000})
+                .setVibrate(new long[] {1000, 1000})
                 .setContentText(toSend)
                 .extend(new NotificationCompat.WearableExtender().setHintShowBackgroundOnly(true))
                 .build();
@@ -203,21 +204,32 @@ public class MainActivity extends AppCompatActivity
          */
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver, new IntentFilter("wearStatus"));
 
+        /**
+         * onclick listener for send notification
+         */
 
+        bSendNotification = (ImageButton) findViewById(R.id.sendNotification);
+        bSendNotification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (editTextDescription.getText().length() > 0) {
+                    String toSend = editTextDescription.getText().toString();
+                    sendNotification(view, toSend);
+                } else {
+                    Snackbar.make(view, R.string.enter_text, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+            }
+        });
 
+        
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();*/
-                if (editTextDescription.getText() != null) {
-                    String toSend = editTextDescription.getText().toString();
-                    sendNotification(view, toSend);
-                } else {
-                    Snackbar.make(view, "Please enter some text", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }
+
             }
         });
 
