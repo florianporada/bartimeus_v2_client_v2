@@ -15,8 +15,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="@string/welcome"
+            android:shadowColor="#000000"
+            android:shadowDx="0.5"
+            android:shadowDy="0.5"
+            android:shadowRadius="4.0"
             android:gravity="center" android:textSize="36sp" android:textStyle="normal|bold"
-            android:textAlignment="center" android:textAllCaps="true"/>
+            android:textAlignment="center" android:textAllCaps="true" android:textColor="@color/ambient_mode_text"/>
 
     <TextView
             android:id="@+id/clock"

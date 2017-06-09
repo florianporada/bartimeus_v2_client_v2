@@ -188,7 +188,7 @@ public class MainActivity extends WearableActivity implements
                     new Runnable() {
                         public void run() {
                             TextView tv = (TextView) findViewById(R.id.text);
-                            tv.setText("WELCOME");
+                            tv.setText(R.string.welcome);
                             mContainerView.setBackgroundColor(WHITE);
                         }
                     },10000);
