@@ -21,7 +21,6 @@ public class ServerConnectionService extends Service {
 
     private String socketIp;
     private int socketPort;
-    private TCPClient mTcpClient;
     private connectTask mTask;
     private SharedPreferences sharedPreferences;
 
@@ -37,14 +36,15 @@ public class ServerConnectionService extends Service {
 
         Log.v(TAG, "serverConnectionService is running now");
 
-        mTask = new connectTask();
-        mTask.execute("");
+        //mTask = new connectTask();
+        //mTask.execute("");
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
             if (intent.getBooleanExtra("reloadServerService", false)) {
+                if (mTask != null) mTask.stopClient();
                 mTask = new connectTask();
                 mTask.execute("");
             }
@@ -59,18 +59,9 @@ public class ServerConnectionService extends Service {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    private void broadcastServerStatus(boolean status) {
-        Intent intent = new Intent("serverStatus");
-        intent.putExtra("serverStatus",  status);
-        sendStatusBroadcast(intent);
-    }
-
-    private void sendStatusBroadcast(Intent intent){
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-    }
-
-
     public class connectTask extends AsyncTask<String,String,TCPClient> {
+        private TCPClient mTcpClient;
+
         @Override
         protected TCPClient doInBackground(String... message) {
             //we create a TCPClient object and
@@ -85,10 +76,6 @@ public class ServerConnectionService extends Service {
 
             mTcpClient.run();
 
-            if (isCancelled()) {
-                mTcpClient.stopClient();
-            }
-
             return null;
         }
 
@@ -102,6 +89,13 @@ public class ServerConnectionService extends Service {
             intent.putExtra("VibrationPattern", Arrays.toString(values));
 
             startService(intent);
+        }
+
+        protected void stopClient () {
+            if (mTcpClient != null) {
+                mTcpClient.stopClient();
+                mTcpClient = null;
+            }
         }
     }
 }

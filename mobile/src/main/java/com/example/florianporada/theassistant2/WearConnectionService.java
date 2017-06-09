@@ -176,7 +176,8 @@ public class WearConnectionService extends Service implements GoogleApiClient.Co
 
         long[] pattern;
         int id = -1;
-        string = string.split("|")[string.split("|").length - 1].replaceAll("[^0-9]","");
+        //string = string.split(new Character('|').toString())[string.split(new Character('|').toString()).length - 1].replaceAll("[^0-9]","");
+        string = string.replaceAll("[^0-9]","");
 
         try {
             id = Integer.parseInt(string);

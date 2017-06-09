@@ -13,12 +13,28 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:showIn="@layout/app_bar_main"
         tools:context="com.example.florianporada.theassistant2.MainActivity">
-
     <TextView
+            android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/send_to_wearable"/>
-
+            android:text="@string/send_to_wearable" android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"/>
+    <LinearLayout
+            android:id="@+id/notificationContainer"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView2"
+            android:layout_alignParentTop="true" android:layout_alignParentStart="true" android:layout_marginTop="16dp">
+        <EditText
+                android:id="@+id/editText"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="6"/>
+        <ImageButton
+                android:id="@+id/sendNotification" android:src="@android:drawable/ic_menu_send"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    </LinearLayout>
     <LinearLayout
             android:id="@+id/serverContainer"
             android:orientation="horizontal"
@@ -28,9 +44,10 @@
             android:layout_alignParentStart="true" android:layout_marginTop="15dp">
         <TextView
                 android:text="@string/dashboard_server_connection"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:id="@+id/textViewServerConnection" android:gravity="center_vertical|start" android:layout_weight="0.8"
-                android:textSize="14sp" android:layout_width="match_parent"/>
+                android:textSize="14sp"/>
         <ImageView
                 android:layout_width="@dimen/box_size"
                 android:layout_height="@dimen/box_size" app:srcCompat="@android:drawable/presence_offline"
@@ -38,23 +55,7 @@
         <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/reloadServer" android:src="@android:drawable/ic_popup_sync"
-        />
-    </LinearLayout>
-    <LinearLayout
-            android:id="@+id/notificationContainer"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true" android:layout_alignParentStart="true" android:layout_marginTop="16dp">
-        <EditText
-                android:id="@+id/editText"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="6"/>
-        <ImageButton
-                android:id="@+id/sendNotification" android:src="@android:drawable/ic_menu_send"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                android:id="@+id/reloadServer" android:src="@android:drawable/ic_popup_sync"/>
     </LinearLayout>
     <LinearLayout
             android:id="@+id/wearContainer"
@@ -65,7 +66,7 @@
             android:layout_below="@+id/serverContainer" android:layout_alignParentStart="true">
         <TextView
                 android:text="@string/dashboard_wear_connection"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:id="@+id/textViewWearConnection" android:gravity="center_vertical|start" android:layout_weight="0.8"
                 android:textSize="14sp" android:textAlignment="viewStart"/>
@@ -76,7 +77,13 @@
         <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/reloadWear" android:src="@android:drawable/ic_popup_sync"
-        />
+                android:id="@+id/reloadWear" android:src="@android:drawable/ic_popup_sync"/>
     </LinearLayout>
+    <ImageView
+            app:srcCompat="@drawable/logo"
+            android:id="@+id/imageView4"
+            android:layout_height="175dp"
+            android:layout_width="175dp"
+            android:layout_marginBottom="96dp" android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"/>
 </RelativeLayout>

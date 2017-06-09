@@ -1,8 +1,10 @@
 package com.example.florianporada.theassistant2;
 
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.content.*;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -43,6 +45,9 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG = "MAIN_ACTIVITY";
     private static final String TO_WEAR = "/to_wear";
     private static final String PREFERENCE_FILE_KEY = "TheAssistantFile";
+
+    private static final String INTENT_SERVER_STATUS = "serverStatus";
+    private static final String INTENT_WEAR_STATUS = "wearStatus";
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedPreferencesEditor;
@@ -94,27 +99,48 @@ public class MainActivity extends AppCompatActivity
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            isWearConnected = intent.getBooleanExtra("wearStatus", false);
-            if (isWearConnected) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ivWear.setImageResource(android.R.drawable.presence_online);
-                    }
-                });
-                Log.d(TAG, "Wearable connected: " + String.valueOf(intent.getBooleanExtra("wearStatus", false)));
+            switch (intent.getAction()) {
+                case INTENT_WEAR_STATUS:
+                    isWearConnected = intent.getBooleanExtra("wearStatus", false);
+                    if (isWearConnected) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ivWear.setImageResource(android.R.drawable.presence_online);
+                            }
+                        });
+                        Log.d(TAG, "Wearable connected: " + String.valueOf(intent.getBooleanExtra("wearStatus", false)));
 
-            }
-
-            isServerConnected = intent.getBooleanExtra("serverStatus", false);
-            if (isServerConnected) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ivServer.setImageResource(android.R.drawable.presence_online);
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ivWear.setImageResource(android.R.drawable.presence_offline);
+                            }
+                        });
+                        Log.d(TAG, "Wearable connected: " + String.valueOf(intent.getBooleanExtra("wearStatus", false)));
                     }
-                });
-                Log.d(TAG, "Server connected: " + String.valueOf(intent.getBooleanExtra("serverStatus", false)));
+                    break;
+                case INTENT_SERVER_STATUS:
+                    isServerConnected = intent.getBooleanExtra("serverStatus", false);
+                    if (isServerConnected) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ivServer.setImageResource(android.R.drawable.presence_online);
+                            }
+                        });
+                        Log.d(TAG, "Server connected: " + String.valueOf(intent.getBooleanExtra("serverStatus", false)));
+                    } else {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                ivServer.setImageResource(android.R.drawable.presence_offline);
+                            }
+                        });
+                        Log.d(TAG, "Server connected: " + String.valueOf(intent.getBooleanExtra("serverStatus", false)));
+                    }
+                    break;
             }
         }
     };
@@ -129,6 +155,25 @@ public class MainActivity extends AppCompatActivity
         Intent wearConnectionIntent = new Intent(this, WearConnectionService.class);
         wearConnectionIntent.putExtra("reloadWearableService", true);
         startService(wearConnectionIntent);
+    }
+
+    private void openDialog () {
+        AlertDialog.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+        } else {
+            builder = new AlertDialog.Builder(this);
+        }
+        builder.setTitle("Information")
+                .setMessage("Here you see helping information")
+                .setCancelable(false)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // code on click
+                    }
+                })
+                .setIcon(android.R.drawable.ic_menu_help)
+                .show();
     }
 
 
@@ -227,9 +272,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
-
+                openDialog();
             }
         });
 

@@ -52,7 +52,7 @@ public class SettingsActivity extends AppCompatActivity {
         mSocketPort = (EditText) findViewById(R.id.settings_editText_socketport);
 
         mSocketIp.setText(sharedPreferences.getString("keySocketIp", null));
-        mSocketPort.setText(sharedPreferences.getInt("keySocketPort", 0) + "");
+        mSocketPort.setText(String.valueOf(sharedPreferences.getInt("keySocketPort", 0)));
 
 
         mSettingsSave = (Button) findViewById(R.id.settings_save);
