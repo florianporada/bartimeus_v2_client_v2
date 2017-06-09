@@ -22,6 +22,18 @@ public class WearConnectionService extends Service implements GoogleApiClient.Co
     private static final String TAG = "WEAR_CONNECTION_SERVICE";
     private static final String TO_WEAR = "/to_wear";
 
+    private static final long VIBRATE_SHORT = 400;
+    private static final long VIBRATE_MEDIUM = 800;
+    private static final long VIBRATE_LONG = 1600;
+    private static final long VIBRATE_EXTRALONG = 2400;
+
+    private static final long PAUSE_SHORT = VIBRATE_SHORT;
+    private static final long PAUSE_MEDIUM = VIBRATE_MEDIUM;
+    private static final long PAUSE_LONG = VIBRATE_LONG;
+    private static final long PAUSE_EXTRALONG = VIBRATE_EXTRALONG;
+
+
+
     private GoogleApiClient mGoogleApiClient;
 
     public WearConnectionService() {
@@ -36,26 +48,28 @@ public class WearConnectionService extends Service implements GoogleApiClient.Co
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent.getBooleanExtra("reloadWearableService", false)) {
-            Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
-                @Override
-                public void onResult(NodeApi.GetConnectedNodesResult nodes) {
-                    if (nodes.getNodes().size() > 0) {
-                        broadcastWearStatus(true);
-                    } else {
-                        broadcastWearStatus(false);
+        if (intent != null) {
+            if (intent.getBooleanExtra("reloadWearableService", false)) {
+                Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
+                    @Override
+                    public void onResult(NodeApi.GetConnectedNodesResult nodes) {
+                        if (nodes.getNodes().size() > 0) {
+                            broadcastWearStatus(true);
+                        } else {
+                            broadcastWearStatus(false);
+                        }
                     }
+                });
+            }
+
+            if (intent.getStringExtra("VibrationPattern") != null) {
+                Log.v(TAG, intent.getStringExtra("VibrationPattern"));
+
+                long[] pattern = patternConverter(intent.getStringExtra("VibrationPattern"));
+
+                if (pattern.length > 0) {
+                    sendPatternToWear(pattern);
                 }
-            });
-        }
-
-        if (intent.getStringExtra("VibrationPattern") != null) {
-            Log.v(TAG, intent.getStringExtra("VibrationPattern"));
-
-            long[] pattern = patternConverter(intent.getStringExtra("VibrationPattern"));
-
-            if (pattern.length > 0) {
-                sendPatternToWear(pattern);
             }
         }
 
@@ -143,22 +157,65 @@ public class WearConnectionService extends Service implements GoogleApiClient.Co
      * converts incoming string to vibration pattern
      */
     private long[] patternConverter(String string) {
-        // referecnce : E/WEAR_CONNECTION_SERVICE: Error tansforming the pattern: [5|Ring| A known person is at the door|patternlayout: 200,200,500,200,400]
+        // referecnce : pattern: [5|Ring| A known person is at the door|patternlayout: 200,200,500,200,400]
 
-        string = string.split("patternlayout")[string.split("patternlayout:").length - 1];
-        String[] stringPattern = string.split(",");
-        long[] pattern = new long[stringPattern.length];
+//        string = string.split("patternlayout")[string.split("patternlayout:").length - 1];
+//        String[] stringPattern = string.split(",");
+//        long[] pattern = new long[stringPattern.length];
+//
+//        for (int i = 0; i < stringPattern.length; i++){
+//            try {
+//                String convertedString = stringPattern[i].replaceAll("[^0-9]","");
+//                pattern[i] = Long.parseLong(convertedString);
+//            } catch (Exception e) {
+//                Log.e(TAG, "Error tansforming the pattern: " + stringPattern[i] + " e: " + e);
+//            }
+//        }
+//
+//        Log.d(TAG, "Transformed pattern: " + pattern.length);
 
-        for (int i = 0; i < stringPattern.length; i++){
-            try {
-                String convertedString = stringPattern[i].replaceAll("[^0-9]","");
-                pattern[i] = Long.parseLong(convertedString);
-            } catch (Exception e) {
-                Log.e(TAG, "Error tansforming the pattern: " + stringPattern[i] + " e: " + e);
-            }
+        long[] pattern;
+        int id = -1;
+        string = string.split("|")[string.split("|").length - 1].replaceAll("[^0-9]","");
+
+        try {
+            id = Integer.parseInt(string);
+        } catch (Exception e) {
+            Log.e(TAG, "Error tansforming the id: " + string + " e: " + e);
         }
 
-        Log.d(TAG, "Transformed pattern: " + pattern.length);
+        switch (id) {
+            case 0:
+                pattern = new long[] {PAUSE_MEDIUM, VIBRATE_EXTRALONG, PAUSE_MEDIUM, VIBRATE_LONG, PAUSE_MEDIUM, VIBRATE_MEDIUM};
+                break;
+            case 1:
+                pattern = new long[] {PAUSE_MEDIUM, VIBRATE_MEDIUM, PAUSE_MEDIUM, VIBRATE_LONG, PAUSE_MEDIUM, VIBRATE_EXTRALONG};
+                break;
+            case 2:
+                pattern = new long[] {PAUSE_MEDIUM, VIBRATE_LONG};
+                break;
+            case 3:
+                pattern = new long[] {PAUSE_MEDIUM, VIBRATE_LONG, PAUSE_MEDIUM, VIBRATE_LONG};
+                break;
+            case 4:
+                pattern = new long[] {PAUSE_MEDIUM, VIBRATE_LONG, PAUSE_MEDIUM, VIBRATE_LONG, PAUSE_MEDIUM, VIBRATE_LONG};
+                break;
+            case 5:
+                pattern = new long[] {PAUSE_MEDIUM, VIBRATE_EXTRALONG};
+                break;
+            case 6:
+                pattern = new long[] {PAUSE_MEDIUM, VIBRATE_LONG};
+                break;
+            case 7:
+                pattern = new long[] {PAUSE_MEDIUM, VIBRATE_LONG, PAUSE_MEDIUM, VIBRATE_LONG, PAUSE_MEDIUM, VIBRATE_LONG};
+                break;
+            case 8:
+                pattern = new long[] {PAUSE_MEDIUM, VIBRATE_LONG, PAUSE_MEDIUM, VIBRATE_LONG};
+                break;
+            default:
+                pattern = new long[] {PAUSE_MEDIUM, VIBRATE_SHORT, PAUSE_SHORT, VIBRATE_SHORT, PAUSE_SHORT, VIBRATE_SHORT, PAUSE_SHORT, VIBRATE_SHORT};
+                break;
+        }
 
         return pattern;
     }

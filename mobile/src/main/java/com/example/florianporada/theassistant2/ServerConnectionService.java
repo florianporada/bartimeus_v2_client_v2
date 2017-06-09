@@ -43,9 +43,11 @@ public class ServerConnectionService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent.getBooleanExtra("reloadServerService", false)) {
-            mTask = new connectTask();
-            mTask.execute("");
+        if (intent != null) {
+            if (intent.getBooleanExtra("reloadServerService", false)) {
+                mTask = new connectTask();
+                mTask.execute("");
+            }
         }
 
         return super.onStartCommand(intent, flags, startId);
