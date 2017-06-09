@@ -36,17 +36,21 @@ public class ServerConnectionService extends Service {
 
         Log.v(TAG, "serverConnectionService is running now");
 
-        //mTask = new connectTask();
-        //mTask.execute("");
+        mTask = new connectTask();
+        mTask.execute("");
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
             if (intent.getBooleanExtra("reloadServerService", false)) {
-                if (mTask != null) mTask.stopClient();
-                mTask = new connectTask();
-                mTask.execute("");
+                try {
+                    mTask.stopClient();
+                    mTask = new connectTask();
+                    mTask.execute("");
+                } catch (Exception e) {
+                    Log.e(TAG, "onStartCommand: no TCP Client available", e);
+                }
             }
         }
 

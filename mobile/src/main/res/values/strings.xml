@@ -7,11 +7,13 @@
 
     <string name="send_to_wearable">Send notification:</string>
     <string name="enter_text">Please enter some text</string>
+    <string name="no_notification">No notification</string>
+    <string name="empty_notification">You sent an empty notification</string>
+    <string name="information">Information</string>
 
 
     <string name="reloaded_wearable_service">Reloaded wearable service</string>
     <string name="reloaded_server_service">Reloaded server service</string>
-
 
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings">SettingsActivity</string>

@@ -101,7 +101,7 @@ public class WearConnectionService extends Service implements GoogleApiClient.Co
      */
     private void sendPatternToWear(final String message) {
         final StringBuilder patternString = new StringBuilder();
-        String notification = "no notification found";
+        String notification = getString(R.string.no_notification);
         long[] pattern = patternConverter(message);
 
         try {

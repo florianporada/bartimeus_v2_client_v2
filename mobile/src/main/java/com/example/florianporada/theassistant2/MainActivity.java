@@ -66,11 +66,11 @@ public class MainActivity extends AppCompatActivity
     private void sendNotification(View view, String string) {
         String toSend = string;
         if(toSend.isEmpty())
-            toSend = "You sent an empty notification";
+            toSend = getString(R.string.empty_notification);
         Notification notification = new NotificationCompat.Builder(getApplication())
                 .setSmallIcon(R.drawable.logo)
-                .setContentTitle("Info")
-                .setVibrate(new long[] {1000, 1000})
+                .setContentTitle(getString(R.string.information))
+                .setVibrate(new long[] {200, 500})
                 .setContentText(toSend)
                 .extend(new NotificationCompat.WearableExtender().setHintShowBackgroundOnly(true))
                 .build();
@@ -102,44 +102,11 @@ public class MainActivity extends AppCompatActivity
             switch (intent.getAction()) {
                 case INTENT_WEAR_STATUS:
                     isWearConnected = intent.getBooleanExtra("wearStatus", false);
-                    if (isWearConnected) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ivWear.setImageResource(android.R.drawable.presence_online);
-                            }
-                        });
-                        Log.d(TAG, "Wearable connected: " + String.valueOf(intent.getBooleanExtra("wearStatus", false)));
-
-                    } else {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ivWear.setImageResource(android.R.drawable.presence_offline);
-                            }
-                        });
-                        Log.d(TAG, "Wearable connected: " + String.valueOf(intent.getBooleanExtra("wearStatus", false)));
-                    }
+                    updateWearStatusView(isWearConnected);
                     break;
                 case INTENT_SERVER_STATUS:
                     isServerConnected = intent.getBooleanExtra("serverStatus", false);
-                    if (isServerConnected) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ivServer.setImageResource(android.R.drawable.presence_online);
-                            }
-                        });
-                        Log.d(TAG, "Server connected: " + String.valueOf(intent.getBooleanExtra("serverStatus", false)));
-                    } else {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ivServer.setImageResource(android.R.drawable.presence_offline);
-                            }
-                        });
-                        Log.d(TAG, "Server connected: " + String.valueOf(intent.getBooleanExtra("serverStatus", false)));
-                    }
+                    updateServerStatusView(isServerConnected);
                     break;
             }
         }
@@ -164,7 +131,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             builder = new AlertDialog.Builder(this);
         }
-        builder.setTitle("Information")
+        builder.setTitle(getString(R.string.information))
                 .setMessage("Here you see helping information")
                 .setCancelable(false)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -174,6 +141,47 @@ public class MainActivity extends AppCompatActivity
                 })
                 .setIcon(android.R.drawable.ic_menu_help)
                 .show();
+    }
+
+    private void updateWearStatusView(boolean status) {
+        if (status) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ivWear.setImageResource(android.R.drawable.presence_online);
+                }
+            });
+            Log.d(TAG, "Wearable connected: " + String.valueOf(status));
+
+        } else {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ivWear.setImageResource(android.R.drawable.presence_offline);
+                }
+            });
+            Log.d(TAG, "Wearable connected: " + String.valueOf(status));
+        }
+    }
+
+    private void updateServerStatusView(boolean status) {
+        if (status) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ivServer.setImageResource(android.R.drawable.presence_online);
+                }
+            });
+            Log.d(TAG, "Server connected: " + String.valueOf(status));
+        } else {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ivServer.setImageResource(android.R.drawable.presence_offline);
+                }
+            });
+            Log.d(TAG, "Server connected: " + String.valueOf(status));
+        }
     }
 
 
@@ -237,7 +245,6 @@ public class MainActivity extends AppCompatActivity
          * starting the service for the server connection
          */
         startServerService();
-
 
         /**
          * start intent filter for server connection check
