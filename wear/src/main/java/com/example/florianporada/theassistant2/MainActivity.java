@@ -96,6 +96,8 @@ public class MainActivity extends WearableActivity implements
     public void onEnterAmbient(Bundle ambientDetails) {
         super.onEnterAmbient(ambientDetails);
         //updateDisplay();
+        mContainerView.setBackgroundColor(WHITE);
+        mTextView.setText(R.string.welcome);
     }
 
     @Override
@@ -199,7 +201,6 @@ public class MainActivity extends WearableActivity implements
                     }
 
                     mContainerView.setBackgroundColor(color);
-                    mTextView = (TextView) findViewById(R.id.text);
                     mTextView.setText(notificationText);
                 }
             });
