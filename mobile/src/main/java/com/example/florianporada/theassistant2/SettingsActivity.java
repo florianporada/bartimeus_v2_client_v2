@@ -62,6 +62,7 @@ public class SettingsActivity extends AppCompatActivity {
                 if (!mSocketIp.getText().toString().matches("") && !mSocketPort.getText().toString().matches("")) {
                     sharedPreferencesEditor.putString("keySocketIp", mSocketIp.getText().toString());
                     sharedPreferencesEditor.putInt("keySocketPort", Integer.parseInt(mSocketPort.getText().toString()));
+                    sharedPreferencesEditor.commit();
                     Log.d(TAG, sharedPreferencesEditor.commit() + "");
 
                     Toast.makeText(SettingsActivity.this, getResources().getString(R.string.settings_toast_save), Toast.LENGTH_LONG).show();
