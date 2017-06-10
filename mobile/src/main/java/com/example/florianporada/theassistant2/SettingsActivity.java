@@ -22,7 +22,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     private EditText mSocketPort;
     private EditText mSocketIp;
-    private Button mSettingsSave;
+    private FloatingActionButton mSettingsSave;
     private Button mSettingsBarcode;
 
     private SharedPreferences sharedPreferences;
@@ -38,14 +38,7 @@ public class SettingsActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(PREFERENCE_FILE_KEY, Context.MODE_PRIVATE);
         sharedPreferencesEditor = sharedPreferences.edit();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mSocketIp = (EditText) findViewById(R.id.settings_editText_socketip);
@@ -54,8 +47,7 @@ public class SettingsActivity extends AppCompatActivity {
         mSocketIp.setText(sharedPreferences.getString("keySocketIp", null));
         mSocketPort.setText(String.valueOf(sharedPreferences.getInt("keySocketPort", 0)));
 
-
-        mSettingsSave = (Button) findViewById(R.id.settings_save);
+        mSettingsSave = (FloatingActionButton) findViewById(R.id.fab);
         mSettingsSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,11 +55,11 @@ public class SettingsActivity extends AppCompatActivity {
                     sharedPreferencesEditor.putString("keySocketIp", mSocketIp.getText().toString());
                     sharedPreferencesEditor.putInt("keySocketPort", Integer.parseInt(mSocketPort.getText().toString()));
                     sharedPreferencesEditor.commit();
-                    Log.d(TAG, sharedPreferencesEditor.commit() + "");
 
-                    Toast.makeText(SettingsActivity.this, getResources().getString(R.string.settings_toast_save), Toast.LENGTH_LONG).show();
+                    Snackbar.make(view, getResources().getString(R.string.settings_toast_save), Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
 
-                    stopService(new Intent(getApplicationContext(), ServerConnectionService.class));
+                    startService(new Intent(getApplicationContext(), ServerConnectionService.class));
                 }
             }
         });
@@ -76,11 +68,11 @@ public class SettingsActivity extends AppCompatActivity {
         mSettingsBarcode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "clicked barcode");
-                String test = sharedPreferences.getString("keySocketIp", null);
-                Log.d(TAG, test);
+                Intent intent = new Intent(getApplicationContext(), BarcodeActivity.class);
+                startActivity(intent);
             }
         });
+
 
     }
 

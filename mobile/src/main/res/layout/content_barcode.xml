@@ -14,11 +14,53 @@
         tools:showIn="@layout/activity_barcode"
         tools:context="com.example.florianporada.theassistant2.BarcodeActivity">
 
-    <FrameLayout
+    <SurfaceView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerHorizontal="true" android:layout_alignParentTop="true"
-            android:id="@+id/camera_preview">
+            android:id="@+id/camera_view" android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp" android:layout_height="280dp"/>
+    <TextView
+            android:id="@+id/qr_code_raw"
+            android:text="@string/qr_code_raw"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp" android:layout_below="@+id/camera_view"
+            android:layout_alignParentStart="true"/>
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/code_info"
+            android:textSize="20sp"
+            android:layout_marginTop="5dp" android:layout_below="@+id/qr_code_raw"
+            android:layout_alignParentStart="true"/>
 
-    </FrameLayout>
+    <TextView
+            android:id="@+id/qr_code_socketurl_label"
+            android:text="@string/settings_socketurl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp" android:layout_below="@+id/code_info"
+            android:layout_alignParentStart="true"/>
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/qr_code_socketurl"
+            android:textSize="20sp"
+            android:layout_marginTop="5dp" android:layout_below="@+id/qr_code_socketurl_label"
+            android:layout_alignParentStart="true"/>
+
+    <TextView
+            android:id="@+id/qr_code_socketport_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_socketport"
+            android:layout_marginTop="22dp" android:layout_below="@+id/qr_code_socketurl"
+            android:layout_alignParentStart="true"/>
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/qr_code_socketport"
+            android:textSize="20sp"
+            android:layout_marginTop="5dp" android:layout_below="@+id/qr_code_socketport_label"
+            android:layout_alignParentStart="true"/>
+
 </RelativeLayout>
