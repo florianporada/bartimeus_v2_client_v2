@@ -64,7 +64,7 @@
         <activity
                 android:name=".BarcodeActivity"
                 android:label="@string/title_activity_barcode"
-                android:parentActivityName=".MainActivity"
+                android:parentActivityName=".SettingsActivity"
                 android:screenOrientation="portrait"
                 android:theme="@style/AppTheme.NoActionBar">
             <meta-data

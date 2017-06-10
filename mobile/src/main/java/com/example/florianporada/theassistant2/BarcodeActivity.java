@@ -4,6 +4,7 @@ import android.*;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Camera;
@@ -33,6 +34,7 @@ public class BarcodeActivity extends AppCompatActivity {
 
     private static final String TAG = BarcodeActivity.class.getSimpleName();
     private static final String PREFERENCE_FILE_KEY = "TheAssistantFile";
+    static final int FINISHED_QRCODE_SCANNER = 1;
 
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor sharedPreferencesEditor;
@@ -76,7 +78,10 @@ public class BarcodeActivity extends AppCompatActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        BarcodeActivity.this.finish();
+                        Intent returnIntent = new Intent(BarcodeActivity.this, SettingsActivity.class);
+                        setResult(RESULT_OK);
+                        startActivityForResult(returnIntent, FINISHED_QRCODE_SCANNER);
+
                     }
                 }, 2000);
             }
@@ -149,6 +154,8 @@ public class BarcodeActivity extends AppCompatActivity {
                                 socketPort.setText(barcodes.valueAt(0).displayValue.split(":")[1]);
                             } catch (Exception e) {
                                 Log.w(TAG, "run: wrong qrcode format. try: '<ipaddress>:<port>'", e);
+                                socketUrl.setText("");
+                                socketPort.setText("");
                             }
                         }
                     });

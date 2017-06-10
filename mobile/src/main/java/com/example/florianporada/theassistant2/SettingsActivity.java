@@ -19,6 +19,7 @@ import android.widget.Toast;
 public class SettingsActivity extends AppCompatActivity {
     private static final String TAG = "SETTINGS_ACTIVITY";
     private static final String PREFERENCE_FILE_KEY = "TheAssistantFile";
+    static final int FINISHED_QRCODE_SCANNER = 1;
 
     private EditText mSocketPort;
     private EditText mSocketIp;
@@ -85,4 +86,15 @@ public class SettingsActivity extends AppCompatActivity {
         return super.dispatchTouchEvent(ev);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == FINISHED_QRCODE_SCANNER) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                Log.d(TAG, "onActivityResult: " + resultCode);
+                mSocketIp.setText(sharedPreferences.getString("keySocketIp", null));
+                mSocketPort.setText(String.valueOf(sharedPreferences.getInt("keySocketPort", 0)));
+            }
+        }
+    }
 }
