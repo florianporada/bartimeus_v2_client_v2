@@ -65,25 +65,33 @@ public class BarcodeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Log.d(TAG, "onClick: " + socketUrl.getText().toString());
-                Log.d(TAG, "onClick: " + Integer.parseInt(socketPort.getText().toString()));
+                if (!socketUrl.getText().toString().matches("") ||
+                        !socketPort.getText().toString().matches("") ||
+                        socketPort.getText().toString().matches("^-?\\d+$")) {
+                    Log.d(TAG, "onClick: " + socketUrl.getText().toString());
+                    Log.d(TAG, "onClick: " + Integer.parseInt(socketPort.getText().toString()));
 
-                sharedPreferencesEditor.putString("keySocketIp", socketUrl.getText().toString());
-                sharedPreferencesEditor.putInt("keySocketPort", Integer.parseInt(socketPort.getText().toString()));
-                sharedPreferencesEditor.commit();
+                    sharedPreferencesEditor.putString("keySocketIp", socketUrl.getText().toString());
+                    sharedPreferencesEditor.putInt("keySocketPort", Integer.parseInt(socketPort.getText().toString()));
+                    sharedPreferencesEditor.commit();
 
-                Snackbar.make(view, getResources().getText(R.string.settings_toast_save), Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                    Snackbar.make(view, getResources().getText(R.string.settings_toast_save), Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Intent returnIntent = new Intent(BarcodeActivity.this, SettingsActivity.class);
-                        setResult(RESULT_OK);
-                        startActivityForResult(returnIntent, FINISHED_QRCODE_SCANNER);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent returnIntent = new Intent(BarcodeActivity.this, SettingsActivity.class);
+                            setResult(RESULT_OK);
+                            startActivityForResult(returnIntent, FINISHED_QRCODE_SCANNER);
 
-                    }
-                }, 2000);
+                        }
+                    }, 2000);
+                } else {
+                    Snackbar.make(view, getResources().getText(R.string.qr_code_error), Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+
             }
         });
 

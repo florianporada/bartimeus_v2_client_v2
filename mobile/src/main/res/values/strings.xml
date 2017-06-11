@@ -31,5 +31,7 @@
     <string name="dashboard_wear_connection">Wearable connection</string>
 
     <string name="qr_code_raw">RAW data</string>
+    <string name="qr_code_error">Invalid qr code</string>
+
 
 </resources>
