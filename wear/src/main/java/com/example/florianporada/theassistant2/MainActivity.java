@@ -2,10 +2,12 @@ package com.example.florianporada.theassistant2;
 
 import android.content.*;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.util.SortedList;
 import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.view.BoxInsetLayout;
 import android.util.Log;
@@ -16,8 +18,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.*;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.util.*;
+import java.util.stream.IntStream;
 
 import static android.graphics.Color.*;
 
@@ -37,6 +39,8 @@ public class MainActivity extends WearableActivity implements
     private BoxInsetLayout mContainerView;
     private TextView mTextView;
     private TextView mClockView;
+    private boolean notifierLocked = false;
+    private Queue<String> notificationQueue = new PriorityQueue<>();
     //private GoogleApiClient mGoogleApiClient;
 
     private long[] StringArrayToLongArray(String[] numbers) {
@@ -53,7 +57,7 @@ public class MainActivity extends WearableActivity implements
             // Get extra data included in the Intent
             String message = intent.getStringExtra("key");
             sharedPreferencesEditor.putString("lastPattern", message).commit();
-            startNotifier(message);
+            queuePattern(message);
         }
     };
 
@@ -117,7 +121,6 @@ public class MainActivity extends WearableActivity implements
             mContainerView.setBackgroundColor(getResources().getColor(android.R.color.black));
             mTextView.setTextColor(getResources().getColor(android.R.color.white));
             mClockView.setVisibility(View.VISIBLE);
-
             mClockView.setText(AMBIENT_DATE_FORMAT.format(new Date()));
         } else {
             mContainerView.setBackground(null);
@@ -157,14 +160,26 @@ public class MainActivity extends WearableActivity implements
     }
 
     private void playLastPattern() {
-        String lastPattern = sharedPreferences.getString("lastPattern", null);
-        startNotifier(lastPattern);
-        Log.d(TAG, "onLongClick: last pattern is: " + lastPattern);
+        if (!notifierLocked) {
+            String lastPattern = sharedPreferences.getString("lastPattern", null);
+            queuePattern(lastPattern);
+            Log.d(TAG, "onLongClick: last pattern is: " + lastPattern);
+        }
+    }
+
+    private void queuePattern(String string) {
+        notificationQueue.add(string);
+
+        if (!notifierLocked) {
+            startNotifier();
+        }
     }
 
 
-    private void startNotifier(String string) {
+    private void startNotifier() {
         try {
+            notifierLocked = true;
+            String string = notificationQueue.remove();
             final String notificationText = string.split("notification:")[string.split("notification:").length - 1].trim();
             final String notificationPattern = string.split("notification:")[0].trim();
             long[] pattern = StringArrayToLongArray(notificationPattern.split(";"));
@@ -180,6 +195,7 @@ public class MainActivity extends WearableActivity implements
                 @Override
                 public void run() {
                     int color;
+                    String infoText;
 
                     switch (notificationText) {
                         case "wrong ring":
@@ -204,6 +220,23 @@ public class MainActivity extends WearableActivity implements
                     mTextView.setText(notificationText);
                 }
             });
+
+            final Handler handler = new Handler();
+            int delay = 0;
+            for (int i = 0; i < pattern.length; i++) {
+                delay += pattern[i];
+            }
+
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    notifierLocked = false;
+                    if (!notificationQueue.isEmpty()) {
+                        startNotifier();
+                    }
+                }
+            }, delay);
+
 
         } catch (Exception e) {
             Log.e(TAG, "startNotifier: could not transform string", e);
