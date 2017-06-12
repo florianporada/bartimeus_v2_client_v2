@@ -106,7 +106,6 @@ public class WearConnectionService extends Service implements GoogleApiClient.Co
 
         try {
             notification = message.split(Pattern.quote("|"))[1].trim().toLowerCase();
-
         } catch (Exception e) {
             Log.e(TAG, "sendPatternToWear: no notification found in message string", e);
         }

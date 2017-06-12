@@ -55,9 +55,12 @@ public class MainActivity extends WearableActivity implements
         @Override
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
-            String message = intent.getStringExtra("key");
-            sharedPreferencesEditor.putString("lastPattern", message).commit();
-            queuePattern(message);
+            Log.d(TAG, "onReceive: " + intent.getAction());
+            if (intent.getAction().equals("wearServiceIntent")) {
+                String wearServiceString = intent.getStringExtra("wearServiceString");
+                sharedPreferencesEditor.putString("lastPattern", wearServiceString).commit();
+                queuePattern(wearServiceString);
+            }
         }
     };
 
@@ -84,7 +87,7 @@ public class MainActivity extends WearableActivity implements
 
 
         LocalBroadcastManager.getInstance(getApplication()).registerReceiver(
-                mMessageReceiver, new IntentFilter("intentKey"));
+                mMessageReceiver, new IntentFilter("wearServiceIntent"));
 
         mTextView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override

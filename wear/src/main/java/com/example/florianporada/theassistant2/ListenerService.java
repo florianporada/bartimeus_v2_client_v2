@@ -11,11 +11,13 @@ import com.google.android.gms.wearable.WearableListenerService;
 public class ListenerService extends WearableListenerService {
 
     private static final String TO_WEAR = "/to_wear";
+    private static final String TAG = ListenerService.class.getSimpleName();
 
-    private void sendMessageToActivity(String msg) {
-        Intent intent = new Intent("intentKey");
+
+    private void sendMessageToActivity(String wearServiceString) {
+        Intent intent = new Intent("wearServiceIntent");
         // You can also include some extra data.
-        intent.putExtra("key", msg);
+        intent.putExtra("wearServiceString", wearServiceString);
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
     }
 
@@ -24,8 +26,7 @@ public class ListenerService extends WearableListenerService {
 
         if (messageEvent.getPath().equals(TO_WEAR)) {
             final String message = new String(messageEvent.getData());
-            Log.v("myTag", "Message path received on watch is: " + messageEvent.getPath());
-            Log.v("myTag", "Message received on watch is: " + message);
+            Log.v(TAG, "Message received on watch is: " + message);
             sendMessageToActivity(message);
         } else {
             super.onMessageReceived(messageEvent);
