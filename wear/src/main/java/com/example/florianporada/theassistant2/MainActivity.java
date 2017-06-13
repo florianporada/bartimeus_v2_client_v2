@@ -164,7 +164,7 @@ public class MainActivity extends WearableActivity implements
 
     private void playLastPattern() {
         if (!notifierLocked) {
-            String lastPattern = sharedPreferences.getString("lastPattern", null);
+            String lastPattern = sharedPreferences.getString("lastPattern", "");
             queuePattern(lastPattern);
             Log.d(TAG, "onLongClick: last pattern is: " + lastPattern);
         }
