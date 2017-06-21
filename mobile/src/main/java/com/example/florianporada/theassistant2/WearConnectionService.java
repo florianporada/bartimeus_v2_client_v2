@@ -64,11 +64,8 @@ public class WearConnectionService extends Service implements GoogleApiClient.Co
                 });
             }
 
-            if (intent.getStringExtra("VibrationPattern") != null) {
-                Log.v(TAG, intent.getStringExtra("VibrationPattern"));
-
-                sendPatternToWear(intent.getStringExtra("VibrationPattern"));
-
+            if (intent.getStringExtra("VibrationPattern") != null && intent.getStringExtra("VibrationPattern").matches("^\\[\\d+\\|(.*?)\\|(?:.*)$")) {
+                    sendPatternToWear(intent.getStringExtra("VibrationPattern"));
             }
         }
 
