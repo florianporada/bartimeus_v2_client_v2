@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">TheAssistant2</string>
-    <string name="welcome">Welcome!</string>
+    <string name="welcome">Geen notificatie</string>
+    <string name="no_notif">No notification</string>
+    <string name="bad_ring">Onbekend bezoek</string>
+    <string name="ring">Bekend bezoek</string>
+    <string name="motion">Beweging gedetecteerd</string>
+    <string name="incoming">Inkomende Notificatie</string>
 </resources>

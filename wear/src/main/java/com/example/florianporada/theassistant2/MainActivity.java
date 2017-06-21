@@ -199,19 +199,24 @@ public class MainActivity extends WearableActivity implements
                 public void run() {
                     int color;
                     String infoText;
+                    CharSequence transNotifText = getResources().getText(R.string.no_notif);
 
                     switch (notificationText) {
                         case "wrong ring":
                             color = RED;
+                            transNotifText = getResources().getText(R.string.bad_ring);
                             break;
                         case "ring":
-                            color = YELLOW;
+                            color = BLUE;
+                            transNotifText = getResources().getText(R.string.ring);
                             break;
                         case "motion":
-                            color = BLUE;
+                            color = MAGENTA;
+                            transNotifText = getResources().getText(R.string.motion);
                             break;
                         case "warning notification":
-                            color = MAGENTA;
+                            color = BLACK;
+                            transNotifText = getResources().getText(R.string.incoming);
                             break;
                         case "incomming":
                         case "test":
@@ -220,7 +225,7 @@ public class MainActivity extends WearableActivity implements
                     }
 
                     mContainerView.setBackgroundColor(color);
-                    mTextView.setText(notificationText);
+                    mTextView.setText(transNotifText.toString());
                 }
             });
 

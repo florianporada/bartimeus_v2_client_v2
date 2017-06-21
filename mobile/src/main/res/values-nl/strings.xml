@@ -1,0 +1,28 @@
+<resources>
+    <string name="navigation_drawer_open">Open navigatie</string>
+    <string name="navigation_drawer_close">Close navigatie</string>
+
+    <string name="send_to_wearable">Verzend notificatie:</string>
+    <string name="enter_text">Voer uw tekst in</string>
+    <string name="no_notification">Geen notificatie</string>
+    <string name="empty_notification">Je hebt een lege notificatie gestuurd.</string>
+    <string name="information">Informatie</string>
+
+    <string name="nav_settings">Instellingen</string>
+
+    <string name="reloaded_wearable_service">Wearable service is herladen</string>
+    <string name="reloaded_server_service">Server service is herladen</string>
+
+    <string name="action_settings">Instellingen</string>
+    <string name="title_activity_settings">Instellingen</string>
+
+    <string name="settings_toast_save">Instellingen opgeslagen!</string>
+
+    <string name="dashboard_server_connection">Server connectie</string>
+    <string name="dashboard_wear_connection">Wearable connectie</string>
+
+    <string name="qr_code_raw">RAW data</string>
+    <string name="qr_code_error">Invalide QR code</string>
+
+
+</resources>
