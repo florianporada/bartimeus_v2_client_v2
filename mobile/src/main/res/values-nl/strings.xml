@@ -1,6 +1,6 @@
 <resources>
     <string name="navigation_drawer_open">Open navigatie</string>
-    <string name="navigation_drawer_close">Close navigatie</string>
+    <string name="navigation_drawer_close">Sluit navigatie</string>
 
     <string name="send_to_wearable">Verzend notificatie:</string>
     <string name="enter_text">Voer uw tekst in</string>
@@ -10,8 +10,8 @@
 
     <string name="nav_settings">Instellingen</string>
 
-    <string name="reloaded_wearable_service">Wearable service is herladen</string>
-    <string name="reloaded_server_service">Server service is herladen</string>
+    <string name="reloaded_wearable_service">Wearable service wordt herladen</string>
+    <string name="reloaded_server_service">Server service wordt herladen</string>
 
     <string name="action_settings">Instellingen</string>
     <string name="title_activity_settings">Instellingen</string>
