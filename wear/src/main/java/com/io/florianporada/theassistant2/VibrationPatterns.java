@@ -1,4 +1,4 @@
-package com.example.florianporada.theassistant2;
+package com.io.florianporada.theassistant2;
 
 import android.os.Vibrator;
 

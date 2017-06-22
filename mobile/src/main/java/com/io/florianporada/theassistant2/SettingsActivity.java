@@ -1,4 +1,4 @@
-package com.example.florianporada.theassistant2;
+package com.io.florianporada.theassistant2;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 public class SettingsActivity extends AppCompatActivity {
     private static final String TAG = "SETTINGS_ACTIVITY";

@@ -1,4 +1,4 @@
-package com.example.florianporada.theassistant2;
+package com.io.florianporada.theassistant2;
 
 import android.content.Intent;
 import com.google.android.gms.wearable.MessageEvent;

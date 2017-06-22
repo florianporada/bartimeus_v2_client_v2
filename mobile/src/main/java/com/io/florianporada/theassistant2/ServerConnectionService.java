@@ -1,4 +1,4 @@
-package com.example.florianporada.theassistant2;
+package com.io.florianporada.theassistant2;
 
 import android.app.Service;
 import android.content.Context;
@@ -6,11 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.wearable.NodeApi;
-import com.google.android.gms.wearable.Wearable;
 
 import java.util.Arrays;
 

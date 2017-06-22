@@ -4,7 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "com.example.florianporada.theassistant2"
+        applicationId "com.io.florianporada.theassistant2"
         minSdkVersion 21
         targetSdkVersion 25
         versionCode 1

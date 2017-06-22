@@ -1,7 +1,6 @@
-package com.example.florianporada.theassistant2;
+package com.io.florianporada.theassistant2;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
