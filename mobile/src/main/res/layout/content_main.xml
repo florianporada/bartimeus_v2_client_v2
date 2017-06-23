@@ -12,7 +12,7 @@
         android:paddingBottom="@dimen/activity_vertical_margin"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:showIn="@layout/app_bar_main"
-        tools:context="com.example.florianporada.theassistant2.MainActivity">
+        tools:context="com.io.florianporada.theassistant2.MainActivity">
     <TextView
             android:id="@+id/textView2"
             android:layout_width="wrap_content"

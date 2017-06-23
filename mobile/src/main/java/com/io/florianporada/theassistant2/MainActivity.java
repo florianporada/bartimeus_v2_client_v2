@@ -1,16 +1,12 @@
-package com.example.florianporada.theassistant2;
+package com.io.florianporada.theassistant2;
 
-import android.*;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.content.*;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -29,21 +25,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.wearable.*;
-
-import java.io.*;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketAddress;
-import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ActivityCompat.OnRequestPermissionsResultCallback {
@@ -70,9 +54,6 @@ public class MainActivity extends AppCompatActivity
     private ImageButton bReloadWear;
     private ImageButton bReloadServer;
     private ImageButton bSendNotification;
-
-    private ProgressBar bProgressServer;
-    private ProgressBar bProgressWear;
 
     private void sendNotification(View view, String string) {
         String toSend = string;
@@ -160,7 +141,6 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void run() {
                     ivWear.setImageResource(android.R.drawable.presence_online);
-                    bProgressWear.setVisibility(View.GONE);
                 }
             });
             Log.d(TAG, "Wearable connected: " + String.valueOf(status));
@@ -170,7 +150,6 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void run() {
                     ivWear.setImageResource(android.R.drawable.presence_offline);
-                    bProgressWear.setVisibility(View.GONE);
                 }
             });
             Log.d(TAG, "Wearable connected: " + String.valueOf(status));
@@ -183,7 +162,6 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void run() {
                     ivServer.setImageResource(android.R.drawable.presence_online);
-                    bProgressServer.setVisibility(View.GONE);
                 }
             });
             Log.d(TAG, "Server connected: " + String.valueOf(status));
@@ -192,7 +170,6 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void run() {
                     ivServer.setImageResource(android.R.drawable.presence_offline);
-                    bProgressServer.setVisibility(View.GONE);
                 }
             });
             Log.d(TAG, "Server connected: " + String.valueOf(status));
@@ -238,6 +215,11 @@ public class MainActivity extends AppCompatActivity
         final EditText editTextDescription = (EditText) findViewById(R.id.editText);
 
         /**
+         * check permissions
+         */
+        applyPermissions();
+
+        /**
          * indicator for server/wear connection
          */
         ivServer = (ImageView) findViewById(R.id.imageViewServer);
@@ -250,12 +232,6 @@ public class MainActivity extends AppCompatActivity
         bReloadWear = (ImageButton) findViewById(R.id.reloadWear);
 
         /**
-         * progressbars
-         */
-        bProgressServer = (ProgressBar) findViewById(R.id.serverLoading);
-        bProgressWear = (ProgressBar) findViewById(R.id.wearLoading);
-
-        /**
          * onclick listener reload buttons
          */
         bReloadServer.setOnClickListener(new View.OnClickListener() {
@@ -264,7 +240,6 @@ public class MainActivity extends AppCompatActivity
                 startServerService();
                 Snackbar.make(view, R.string.reloaded_server_service, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-                bProgressServer.setVisibility(View.VISIBLE);
             }
         });
 
@@ -274,7 +249,6 @@ public class MainActivity extends AppCompatActivity
                 startWearableService();
                 Snackbar.make(view, R.string.reloaded_wearable_service, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-                bProgressWear.setVisibility(View.VISIBLE);
             }
         });
 
