@@ -48,6 +48,16 @@
                 android:layout_height="match_parent"
                 android:id="@+id/textViewServerConnection" android:gravity="center_vertical|start" android:layout_weight="0.8"
                 android:textSize="14sp"/>
+
+        <ProgressBar
+            android:id="@+id/serverLoading"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="26dp"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/wearContainer"
+            android:layout_marginStart="71dp"
+            android:layout_toEndOf="@+id/imageView4" />
+
         <ImageView
                 android:layout_width="@dimen/box_size"
                 android:layout_height="@dimen/box_size" app:srcCompat="@android:drawable/presence_offline"
@@ -70,6 +80,14 @@
                 android:layout_height="match_parent"
                 android:id="@+id/textViewWearConnection" android:gravity="center_vertical|start" android:layout_weight="0.8"
                 android:textSize="14sp" android:textAlignment="viewStart"/>
+
+        <ProgressBar
+            android:id="@+id/wearLoading"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="26dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.01" />
+
         <ImageView
                 android:layout_width="@dimen/box_size"
                 android:layout_height="@dimen/box_size" app:srcCompat="@android:drawable/presence_offline"
@@ -86,4 +104,5 @@
             android:layout_width="175dp"
             android:layout_marginBottom="96dp" android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"/>
+
 </RelativeLayout>
