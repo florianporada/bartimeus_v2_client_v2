@@ -28,6 +28,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ActivityCompat.OnRequestPermissionsResultCallback {
@@ -54,6 +55,9 @@ public class MainActivity extends AppCompatActivity
     private ImageButton bReloadWear;
     private ImageButton bReloadServer;
     private ImageButton bSendNotification;
+
+    private ProgressBar pLoadingServer;
+    private ProgressBar pLoadingWear;
 
     private void sendNotification(View view, String string) {
         String toSend = string;
@@ -141,6 +145,7 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void run() {
                     ivWear.setImageResource(android.R.drawable.presence_online);
+                    pLoadingWear.setVisibility(View.GONE);
                 }
             });
             Log.d(TAG, "Wearable connected: " + String.valueOf(status));
@@ -150,6 +155,7 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void run() {
                     ivWear.setImageResource(android.R.drawable.presence_offline);
+                    pLoadingWear.setVisibility(View.GONE);
                 }
             });
             Log.d(TAG, "Wearable connected: " + String.valueOf(status));
@@ -162,6 +168,7 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void run() {
                     ivServer.setImageResource(android.R.drawable.presence_online);
+                    pLoadingServer.setVisibility(View.GONE);
                 }
             });
             Log.d(TAG, "Server connected: " + String.valueOf(status));
@@ -170,6 +177,7 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void run() {
                     ivServer.setImageResource(android.R.drawable.presence_offline);
+                    pLoadingServer.setVisibility(View.GONE);
                 }
             });
             Log.d(TAG, "Server connected: " + String.valueOf(status));
@@ -232,6 +240,12 @@ public class MainActivity extends AppCompatActivity
         bReloadWear = (ImageButton) findViewById(R.id.reloadWear);
 
         /**
+         * progressbars
+         */
+        pLoadingServer = (ProgressBar) findViewById(R.id.serverLoading);
+        pLoadingWear = (ProgressBar) findViewById(R.id.wearLoading);
+
+        /**
          * onclick listener reload buttons
          */
         bReloadServer.setOnClickListener(new View.OnClickListener() {
@@ -240,6 +254,7 @@ public class MainActivity extends AppCompatActivity
                 startServerService();
                 Snackbar.make(view, R.string.reloaded_server_service, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                pLoadingServer.setVisibility(View.VISIBLE);
             }
         });
 
@@ -249,6 +264,7 @@ public class MainActivity extends AppCompatActivity
                 startWearableService();
                 Snackbar.make(view, R.string.reloaded_wearable_service, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                pLoadingWear.setVisibility(View.VISIBLE);
             }
         });
 
